@@ -99,7 +99,6 @@ class Planet {
     let nonechoice = [ this.NON_UQM_PLANET ];
     let choicelist = nonechoice.concat(this.uqmPlanetTypes);
     this.uqmPlanetTypeChoices = choicelist;
-    console.log(this.uqmPlanetTypeChoices);
     this.uqmPlanetType = this.uqmPlanetTypeChoices[2];
 
     // this.waterLevel = 0.5;
@@ -330,11 +329,8 @@ class Planet {
       } else {
         type = this.UQM_PLANETTABLE.find(m => m.type == this.uqmPlanetType);
       }
-      console.log(type);
       let seeds = type.seeds;
-      console.log(seeds);
       this.seedString = seeds[Math.floor(Math.random() * seeds.length)];
-      console.log(this.seedString);
     }
 
     // this.seedString = randomLorem({ min: 2, max: 8 });
