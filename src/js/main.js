@@ -48,8 +48,8 @@ class Main extends AbstractApplication {
 
     createBrandTag() {
       let a = document.createElement("a");
-      a.href = "http://www.colordodge.com";
-      a.innerHTML = "<div id='brandTag'>Colordodge</div>";
+      a.href = "http://www.pistolshrimpgames.com";
+      a.innerHTML = "<div id='brandTag'><img id='brandTagImage' src='assets/textures/pistolshrimp_logoonly.png'>UQM Planet Generator</div>";
       document.body.appendChild(a);
     }
 

@@ -66,6 +66,17 @@ module.exports = {
                 test: /\.css$/,
                 use: ['style-loader', 'css-loader'],
             },
+            {
+                test: /\.ttf$/,
+                use: [
+                  {
+                    loader: 'ttf-loader',
+                    options: {
+                      name: './fonts/[hash].[ext]',
+                    },
+                  },
+               ]
+            },
             { test: /\.(glsl|frag|vert)$/, loader: 'raw-loader', exclude: /node_modules/ },
             { test: /\.(glsl|frag|vert)$/, loader: 'glslify-loader', exclude: /node_modules/ },
             { test: /node_modules/, loader: 'ify-loader' },

@@ -26,6 +26,62 @@ class Planet {
 
   constructor() {
 
+    this.UQM_PLANETTABLE = [
+      {
+        "type": "Acid",
+        "seeds" : [ "Wisejzo Guaciil Diniam" ]
+      },
+      {
+        "type": "Alkali",
+        "seeds": [ "Lati Guav Ziclivta", "Pipbivu Ecevi Peteme" ]
+      },
+      {
+        "type": "Azure",
+        "seeds": [ "Fujr" ]
+      },
+      {
+        "type": "Carbide",
+        "seeds": [ "Boci Raseeju Lersa" ]
+      },
+      {
+        "type": "Chlorine",
+        "seeds": [ "Kid Fejove", "Dohgosiv Gafbef", "Vepni", "Sajokog Iver" ]
+      },
+      {
+        "type": "Chondrite",
+        "seeds": [ "Cep Kamme", "Vezi", "Peros Nefgo Finp", "Ozzi" ]
+      },
+      {
+        "type": "Cimmerian",
+        "seeds": [ "Ofs" ]
+      },
+      {
+        "type": "Copper",
+        "seeds": [ 	"Roms", "Tear Lenda Tortif" ]
+      },
+      {
+        "type": "Dust",
+        "seeds": [ "Oke Olca Orehi" ]
+      },
+      {
+        "type": "Fluorescent",
+        "seeds": [ "Ufp Ad Pov", "Lek Lepko", "Nikco Goejan", "Oju", "Sobilb Itz" ]
+      },
+      {
+        "type": "Green",
+        "seeds": [ "Cij Ehezewe" ]
+      },
+      {
+        "type": "Halide",
+        "seeds": [ "Ardief Pawub" ]
+      },
+      {
+        "type": "Ice",
+        "seeds": [ "Kipviw Dog", "Eve Jahi", "Inkocno Vewjec Lei" ]
+      }
+    ];
+    this.NON_UQM_PLANET = "NONE";
+
     this.seedString = "Scarlett";
     this.initSeed();
 
@@ -34,10 +90,18 @@ class Planet {
     this.materials = [];
     this.roughness = 0.8;
     this.metalness = 0.5;
-    this.normalScale = 3.0;
+    this.normalScale = 1.0;
     this.resolution = 1024;
     this.size = 1000;
     this.waterLevel = 0.0;
+
+    this.uqmPlanetTypes = this.getUqmPlanetTypes();
+    let nonechoice = [ this.NON_UQM_PLANET ];
+    let choicelist = nonechoice.concat(this.uqmPlanetTypes);
+    this.uqmPlanetTypeChoices = choicelist;
+    console.log(this.uqmPlanetTypeChoices);
+    this.uqmPlanetType = this.uqmPlanetTypeChoices[2];
+
     // this.waterLevel = 0.5;
 
     this.heightMaps = [];
@@ -124,8 +188,11 @@ class Planet {
 
     this.seedStringControl = window.gui.add(this, "seedString").listen();
     this.seedStringControl.onFinishChange(value => { this.loadSeedFromTextfield(); });
-    // window.gui.add(this, "regenerate");
     window.gui.add(this, "randomize");
+
+    this.uqmPlanetTypeControl = window.gui.add(this, "uqmPlanetType", this.uqmPlanetTypeChoices, );
+    this.uqmPlanetTypeControl.onFinishChange(value => { this.randomizeUqm(); });
+    window.gui.add(this, "randomizeUqm");
 
     document.addEventListener('keydown', (event) => {
       if (event.keyCode == 32) {
@@ -225,7 +292,7 @@ class Planet {
       this.regenerate();
     } else {
       console.log("no seed string");
-      this.randomize();
+      this.randomize(true);
     }
 
   }
@@ -241,19 +308,33 @@ class Planet {
     this.renderScene();
   }
 
-  randomize() {
+  randomize(use_uqm_table = false) {
     // this.seedString = randomString(10);
 
-    let n = Math.random();
-    let wordCount = 0;
-    if (n > 0.8) wordCount = 1;
-    else if (n > 0.4) wordCount = 2;
-    else wordCount = 3;
-
-    this.seedString = "";
-    for (let i=0; i<wordCount; i++) {
-      this.seedString += this.capitalizeFirstLetter(randomLorem({ min: 2, max: 8 }));
-      if (i < wordCount-1) this.seedString += " ";
+    if (!use_uqm_table) {
+      let n = Math.random();
+      let wordCount = 0;
+      if (n > 0.8) wordCount = 1;
+      else if (n > 0.4) wordCount = 2;
+      else wordCount = 3;
+  
+      this.seedString = "";
+      for (let i=0; i<wordCount; i++) {
+        this.seedString += this.capitalizeFirstLetter(randomLorem({ min: 2, max: 8 }));
+        if (i < wordCount-1) this.seedString += " ";
+      }
+    } else {
+      let type = this.UQM_PLANETTABLE[0];
+      if (this.uqmPlanetType == "NONE") {
+        type = this.UQM_PLANETTABLE[Math.floor(Math.random() * this.UQM_PLANETTABLE.length)];
+      } else {
+        type = this.UQM_PLANETTABLE.find(m => m.type == this.uqmPlanetType);
+      }
+      console.log(type);
+      let seeds = type.seeds;
+      console.log(seeds);
+      this.seedString = seeds[Math.floor(Math.random() * seeds.length)];
+      console.log(this.seedString);
     }
 
     // this.seedString = randomLorem({ min: 2, max: 8 });
@@ -262,6 +343,19 @@ class Planet {
     window.history.pushState({seed: this.seedString}, this.seedString, url);
     this.autoGenCountCurrent = 0;
     this.renderScene();
+  }
+
+  randomizeUqm() {
+    this.randomize(1);
+  }
+
+  getUqmPlanetTypes() {
+    let table = this.UQM_PLANETTABLE;
+    let types = [];
+    for (let i = 0; i < table.length; i++) {
+      types.push(table[i].type);
+    }
+    return types;
   }
 
   capitalizeFirstLetter(string) {
