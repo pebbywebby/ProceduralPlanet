@@ -391,6 +391,8 @@ class Planet {
         this.seedString += this.capitalizeFirstLetter(randomLorem({ min: 2, max: 8 }));
         if (i < wordCount-1) this.seedString += " ";
       }
+
+      this.clearPickPlanetSeedUI();
     } else {
       let type = this.UQM_PLANETTABLE[0];
       if (this.uqmPlanetType == "NONE") {
@@ -452,6 +454,25 @@ class Planet {
       this.pickPlanetSeed();
     } else {
       this.randomizeUqm();
+    }
+  }
+
+  clearPickPlanetSeedUI() {
+    this.uqmPlanetSeedChoices = [];
+    this.uqmPlanetSeedChoice = "NONE";
+
+    if (this.uqmPlanetSeedChoiceControl != null) {
+      window.gui.remove(this.uqmPlanetSeedChoiceControl);
+      this.uqmPlanetSeedChoiceControl = null;
+   }
+    if (this.randomizeUqmButton != null) {
+      window.gui.remove(this.randomizeUqmButton);
+      this.randomizeUqmButton = null;
+    }
+
+    if (this.uqmPlanetTypeControl != null) {
+      this.uqmplanetType = this.NON_UQM_PLANET;
+      this.uqmPlanetTypeControl.updateDisplay()
     }
   }
 
