@@ -37,6 +37,11 @@ li.title {
   font-family: "UQM-TinyFont";
 }
 
+a
+{
+  color: #ff4800;
+}
+
 #brandTag
 {
 	position: fixed;
@@ -52,6 +57,16 @@ li.title {
 	font-family: "UQM-3DO",  Helvetica, sans-serif;
 	transition-property: color, background-color, padding;
 	transition-duration: 0.3s;
+}
+
+#creditsBox {
+  position: fixed;
+  z-index: 1000;
+  bottom: 0px;
+  left: 20px;
+  color: #FFFFFF;
+  background-color: rgba(0, 0, 0, 0.8);
+  width: 30%;
 }
 
 #brandTagImage

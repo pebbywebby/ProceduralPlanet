@@ -250,6 +250,14 @@ class Planet {
     infoBoxHolder.appendChild(line);
     infoBoxHolder.appendChild(window.gui.domElement);
 
+    let creditsBox = document.createElement("div");
+    creditsBox.setAttribute("id", "creditsBox");
+    creditsBox.innerHTML = `
+      Forked from <a href="https://github.com/colordodge/ProceduralPlanet">ProceduralPlanet</a> by <a href="https://github.com/colordodge">colordodge</a>.<br>
+      Fonts from <a href="https://github.com/JHGuitarFreak/UQM-MegaMod">UQM MegaMod</a> by <a href="https://github.com/JHGuitarFreak">Serosis</a>.
+      `;
+    document.body.appendChild(creditsBox);
+
     // mobile info box
     let mobileInfoBox = document.createElement("div");
     mobileInfoBox.setAttribute("id", "infoBoxHolderMobile");
