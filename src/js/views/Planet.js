@@ -315,7 +315,7 @@ class Planet {
     creditsBox.setAttribute("id", "creditsBox");
     creditsBox.innerHTML = `
       Forked from <a href="https://github.com/colordodge/ProceduralPlanet">ProceduralPlanet</a> by <a href="https://github.com/colordodge">colordodge</a>.<br>
-      Fonts from <a href="https://github.com/JHGuitarFreak/UQM-MegaMod">UQM MegaMod</a> by <a href="https://github.com/JHGuitarFreak">Serosis</a>.
+      Fonts from <a href="https://github.com/JHGuitarFreak/UQM-MegaMod">UQM MegaMod</a> by <a href="https://github.com/JHGuitarFreak">JHGuitarFreak</a>.
       `;
     document.body.appendChild(creditsBox);
 
