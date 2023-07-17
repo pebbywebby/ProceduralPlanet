@@ -31,6 +31,7 @@ module.exports = {
             'shaders': path.resolve(__dirname, '../src/js/shaders'),
             'sounds': path.resolve(__dirname, '../src/sounds'),
             'textures': path.resolve(__dirname, '../src/textures'),
+            'img': path.resolve(__dirname, '../src/img'),
         }
     },
     plugins: [
@@ -39,6 +40,7 @@ module.exports = {
             {from: 'src/models/', to: 'assets/models/'},
             {from: 'src/sounds/', to: 'assets/sounds/'},
             {from: 'src/textures/', to: 'assets/textures/'},
+            {from: 'src/img/', to: 'assets/img/'},
         ]),
         new webpack.ProvidePlugin({
             'THREE': 'three'
@@ -65,6 +67,17 @@ module.exports = {
             {
                 test: /\.css$/,
                 use: ['style-loader', 'css-loader'],
+            },
+            {
+                test: /\.ttf$/,
+                use: [
+                  {
+                    loader: 'ttf-loader',
+                    options: {
+                      name: './fonts/[hash].[ext]',
+                    },
+                  },
+               ]
             },
             { test: /\.(glsl|frag|vert)$/, loader: 'raw-loader', exclude: /node_modules/ },
             { test: /\.(glsl|frag|vert)$/, loader: 'glslify-loader', exclude: /node_modules/ },

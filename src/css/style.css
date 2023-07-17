@@ -1,3 +1,18 @@
+@font-face {
+  font-family: "UQM-3DO";
+  src: url('/assets/fonts/UQM-3DOMenuLabels.ttf') format('truetype');
+}
+
+@font-face {
+  font-family: "UQM-CommanderFont";
+  src: url('/assets/fonts/UQM-CommanderFont.ttf') format('truetype');
+}
+
+@font-face {
+  font-family: "UQM-TinyFont";
+  src: url('/assets/fonts/UQM-TinyFont.ttf') format('truetype');
+}
+
 body {
     width: 100%;
     height: 100%;
@@ -7,6 +22,24 @@ body {
     padding: 0;
     overflow: hidden;
     font-family: Arial, "Helvetica Neue", Helvetica, sans-serif;
+}
+
+.property-name {
+    font-family: "UQM-TinyFont";
+}
+
+li.title {
+  font-family: "UQM-TinyFont";
+}
+
+.close-button
+{
+  font-family: "UQM-TinyFont";
+}
+
+a
+{
+  color: #ff4800;
 }
 
 #brandTag
@@ -21,10 +54,27 @@ body {
 	text-align: center;
 	padding: 12px 12px 12px 12px;
 	font-size: 18px;
-	font-family: "Helvetica", sans-serif;
+	font-family: "UQM-3DO",  Helvetica, sans-serif;
 	transition-property: color, background-color, padding;
 	transition-duration: 0.3s;
 }
+
+#creditsBox {
+  position: fixed;
+  z-index: 1000;
+  bottom: 0px;
+  left: 20px;
+  color: #FFFFFF;
+  background-color: rgba(0, 0, 0, 0.8);
+  width: 30%;
+}
+
+#brandTagImage
+{
+  vertical-align: middle;
+  padding-right: 12px;
+}
+
 @media (width < 600px) {
 
 }
@@ -76,6 +126,7 @@ body {
 #planetName {
   font-size: 24px;
   line-height: 28px;
+  font-family: "UQM-CommanderFont";
 }
 
 #instructions {
@@ -107,6 +158,7 @@ body {
 #planetNameMobile {
   font-size: 24px;
   line-height: 28px;
+  font-family: "UQM-CommanderFont";
 }
 
 
@@ -125,7 +177,7 @@ body {
   background-color: rgba(0, 0, 0, 0.8);
   padding: 12px 12px 12px 12px;
   font-size: 18px;
-  font-family: "Helvetica-Light", sans-serif;
+  font-family: "UQM-TinyFont", "Helvetica-Light", sans-serif;
   line-height: 18px;
   text-align: center;
 }

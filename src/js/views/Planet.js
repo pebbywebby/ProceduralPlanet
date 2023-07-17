@@ -26,6 +26,122 @@ class Planet {
 
   constructor() {
 
+    this.UQM_PLANETTABLE = [
+      {
+        "type": "Acid",
+        "seeds" : [ "Wisejzo Guaciil Diniam" ]
+      },
+      {
+        "type": "Alkali",
+        "seeds": [ "Lati Guav Ziclivta", "Pipbivu Ecevi Peteme" ]
+      },
+      {
+        "type": "Azure",
+        "seeds": [ "Fujr" ]
+      },
+      {
+        "type": "Carbide",
+        "seeds": [ "Boci Raseeju Lersa" ]
+      },
+      {
+        "type": "Chlorine",
+        "seeds": [ "Kid Fejove", "Dohgosiv Gafbef", "Vepni", "Sajokog Iver" ]
+      },
+      {
+        "type": "Chondrite",
+        "seeds": [ "Cep Kamme", "Vezi", "Peros Nefgo Finp", "Ozzi" ]
+      },
+      {
+        "type": "Cimmerian",
+        "seeds": [ "Ofs" ]
+      },
+      {
+        "type": "Copper",
+        "seeds": [ 	"Roms", "Tear Lenda Tortif" ]
+      },
+      {
+        "type": "Dust",
+        "seeds": [ "Oke Olca Orehi" ]
+      },
+      {
+        "type": "Fluorescent",
+        "seeds": [ "Ufp Ad Pov", "Lek Lepko", "Nikco Goejan", "Oju", "Sobilb Itz" ]
+      },
+      {
+        "type": "Green",
+        "seeds": [ "Cij Ehezewe" ]
+      },
+      {
+        "type": "Halide",
+        "seeds": [ "Ardief Pawub" ]
+      },
+      {
+        "type": "Ice",
+        "seeds": [ "Kipviw Dog", "Eve Jahi", "Inkocno Vewjec Lei" ]
+      },
+      {
+        "type": "Iodine",
+        "seeds": [ "Wogmuv Ambo" ]
+      },
+      {
+        "type": "Magnetic",
+        "seeds": [ "Ridovo Not Zi" ]
+      },
+      {
+        "type": "Maroon",
+        "seeds" : [ "Ahdi Suvetdig" ]
+      },
+      {
+        "type": "Metal",
+        "seeds": [ "Uz Dodefaz", "Ojfe Anaz" ]
+      },
+      {
+        "type": "Neon",
+        "seeds" : [ "Renigpa Zol" ]
+      },
+      {
+        "type": "Opalescent",
+        "seeds": [ "Hijezber", "Ma Emhunge" ]
+      },
+      {
+        "type": "Primordial",
+        "seeds": [ "Simpo Wuhovusz Ho" ]
+      },
+      {
+        "type": "Purple",
+        "seeds": [ "Neno Bimeli Ceajuv" ]
+      },
+      {
+        "type": "Rainbow",
+        "seeds": [ "Jiwfoge Wekvic Ucuu", "Efzek Opemi", "Vasajlo Hulefhik", "Zop Utbugmi Wifcigik", "Vura" ]
+      },
+      {
+        "type": "Sapphire",
+        "seeds": [ "Juototis Jevoviz" ]
+      },
+      {
+        "type": "Treasure",
+        "seeds": [ "Mif Igwodem", "He Wazo", "Feuhiv Zosibo", "Ben Lebuwot" ]
+      },
+      {
+        "type": "Ultramarine",
+        "seeds": [ "Nosogpe" ]
+      },
+      {
+        "type": "Ultraviolet",
+        "seeds": [ "Mo Leiwjun Sis", "Fonzeet Len Itdifh" ]
+      },
+      {
+        "type": "Water",
+        "seeds": [ "Zehfen Vihcuhe", "Soc", "Noag", "Vek Piadowoo Zikijer", "Gafwef" ]
+      },
+      {
+        "type": "Xenolithic",
+        "seeds": [ "Evip Rin" ]
+      }
+    ];
+    this.NON_UQM_PLANET = "NONE";
+
     this.seedString = "Scarlett";
     this.initSeed();
 
@@ -34,10 +150,19 @@ class Planet {
     this.materials = [];
     this.roughness = 0.8;
     this.metalness = 0.5;
-    this.normalScale = 3.0;
+    this.normalScale = 1.0;
     this.resolution = 1024;
     this.size = 1000;
     this.waterLevel = 0.0;
+
+    this.uqmPlanetTypes = this.getUqmPlanetTypes();
+    let nonechoice = [ this.NON_UQM_PLANET ];
+    let choicelist = nonechoice.concat(this.uqmPlanetTypes);
+    this.uqmPlanetTypeChoices = choicelist;
+    this.uqmPlanetType = this.NON_UQM_PLANET;
+    this.uqmPlanetSeedChoices = [];
+    this.uqmPlanetSeedChoice = "NONE";
+
     // this.waterLevel = 0.5;
 
     this.heightMaps = [];
@@ -124,8 +249,10 @@ class Planet {
 
     this.seedStringControl = window.gui.add(this, "seedString").listen();
     this.seedStringControl.onFinishChange(value => { this.loadSeedFromTextfield(); });
-    // window.gui.add(this, "regenerate");
     window.gui.add(this, "randomize");
+
+    this.uqmPlanetTypeControl = window.gui.add(this, "uqmPlanetType", this.uqmPlanetTypeChoices, );
+    this.uqmPlanetTypeControl.onFinishChange(value => { this.pickPlanetType(); });
 
     document.addEventListener('keydown', (event) => {
       if (event.keyCode == 32) {
@@ -184,6 +311,14 @@ class Planet {
     infoBoxHolder.appendChild(line);
     infoBoxHolder.appendChild(window.gui.domElement);
 
+    let creditsBox = document.createElement("div");
+    creditsBox.setAttribute("id", "creditsBox");
+    creditsBox.innerHTML = `
+      Forked from <a href="https://github.com/colordodge/ProceduralPlanet">ProceduralPlanet</a> by <a href="https://github.com/colordodge">colordodge</a>.<br>
+      Fonts from <a href="https://github.com/JHGuitarFreak/UQM-MegaMod">UQM MegaMod</a> by <a href="https://github.com/JHGuitarFreak">JHGuitarFreak</a>.
+      `;
+    document.body.appendChild(creditsBox);
+
     // mobile info box
     let mobileInfoBox = document.createElement("div");
     mobileInfoBox.setAttribute("id", "infoBoxHolderMobile");
@@ -225,7 +360,7 @@ class Planet {
       this.regenerate();
     } else {
       console.log("no seed string");
-      this.randomize();
+      this.randomize(true);
     }
 
   }
@@ -241,19 +376,32 @@ class Planet {
     this.renderScene();
   }
 
-  randomize() {
+  randomize(use_uqm_table = false) {
     // this.seedString = randomString(10);
 
-    let n = Math.random();
-    let wordCount = 0;
-    if (n > 0.8) wordCount = 1;
-    else if (n > 0.4) wordCount = 2;
-    else wordCount = 3;
+    if (!use_uqm_table) {
+      let n = Math.random();
+      let wordCount = 0;
+      if (n > 0.8) wordCount = 1;
+      else if (n > 0.4) wordCount = 2;
+      else wordCount = 3;
+  
+      this.seedString = "";
+      for (let i=0; i<wordCount; i++) {
+        this.seedString += this.capitalizeFirstLetter(randomLorem({ min: 2, max: 8 }));
+        if (i < wordCount-1) this.seedString += " ";
+      }
 
-    this.seedString = "";
-    for (let i=0; i<wordCount; i++) {
-      this.seedString += this.capitalizeFirstLetter(randomLorem({ min: 2, max: 8 }));
-      if (i < wordCount-1) this.seedString += " ";
+      this.clearPickPlanetSeedUI();
+    } else {
+      let type = this.UQM_PLANETTABLE[0];
+      if (this.uqmPlanetType == "NONE") {
+        type = this.UQM_PLANETTABLE[Math.floor(Math.random() * this.UQM_PLANETTABLE.length)];
+      } else {
+        type = this.UQM_PLANETTABLE.find(m => m.type == this.uqmPlanetType);
+      }
+      let seeds = type.seeds;
+      this.seedString = seeds[Math.floor(Math.random() * seeds.length)];
     }
 
     // this.seedString = randomLorem({ min: 2, max: 8 });
@@ -262,6 +410,91 @@ class Planet {
     window.history.pushState({seed: this.seedString}, this.seedString, url);
     this.autoGenCountCurrent = 0;
     this.renderScene();
+  }
+
+  randomizeUqm() {
+    this.randomize(1);
+    this.uqmPlanetSeedChoice = this.seedString;
+    
+    if (this.uqmPlanetSeedChoiceControl != null) {
+      this.uqmPlanetSeedChoiceControl.updateDisplay();
+    }
+  }
+
+  pickPlanetType() {
+    let typeString = this.uqmPlanetType;
+    let type = this.UQM_PLANETTABLE.find(m => m.type == this.uqmPlanetType);
+
+    if (type != null) {
+      this.uqmPlanetSeedChoices = type.seeds;
+      this.uqmPlanetSeedChoice = type.seeds[0];
+    } else {
+      this.uqmPlanetSeedChoices = [];
+      this.uqmPlanetSeedChoice = "NONE";
+    }
+//    console.log(this.uqmPlanetSeedChoices);
+//    console.log(this.uqmPlanetSeedChoice);
+
+    if (this.uqmPlanetSeedChoiceControl != null) {
+      window.gui.remove(this.uqmPlanetSeedChoiceControl);
+      this.uqmPlanetSeedChoiceControl = null;
+    }
+    if (this.randomizeUqmButton != null) {
+      window.gui.remove(this.randomizeUqmButton);
+      this.randomizeUqmButton = null;
+    }
+    
+    if (typeString != this.NON_UQM_PLANET) {
+      this.uqmPlanetSeedChoiceControl = window.gui.add(this, "uqmPlanetSeedChoice", this.uqmPlanetSeedChoices );
+      this.uqmPlanetSeedChoiceControl.onFinishChange(value => { this.pickPlanetSeed(); });
+      this.randomizeUqmButton = window.gui.add(this, "randomizeUqm");
+    }
+
+    if (this.uqmPlanetSeedChoice != "NONE") {
+      this.pickPlanetSeed();
+    } else {
+      this.randomizeUqm();
+    }
+  }
+
+  clearPickPlanetSeedUI() {
+    this.uqmPlanetSeedChoices = [];
+    this.uqmPlanetSeedChoice = "NONE";
+
+    if (this.uqmPlanetSeedChoiceControl != null) {
+      window.gui.remove(this.uqmPlanetSeedChoiceControl);
+      this.uqmPlanetSeedChoiceControl = null;
+   }
+    if (this.randomizeUqmButton != null) {
+      window.gui.remove(this.randomizeUqmButton);
+      this.randomizeUqmButton = null;
+    }
+
+    if (this.uqmPlanetTypeControl != null) {
+      this.uqmplanetType = this.NON_UQM_PLANET;
+      this.uqmPlanetTypeControl.updateDisplay()
+    }
+  }
+
+  pickPlanetSeed() {
+    this.seedString = this.uqmPlanetSeedChoice;
+    if (this.uqmPlanetSeedChoice = "") {
+      this.randomizeUqm();
+    } else {
+      let url = this.updateQueryString("seed", this.seedString);
+      window.history.pushState({seed: this.seedString}, this.seedString, url);
+      this.autoGenCountCurrent = 0;
+      this.renderScene();
+    }
+  }
+
+  getUqmPlanetTypes() {
+    let table = this.UQM_PLANETTABLE;
+    let types = [];
+    for (let i = 0; i < table.length; i++) {
+      types.push(table[i].type);
+    }
+    return types;
   }
 
   capitalizeFirstLetter(string) {
