@@ -48,7 +48,7 @@ class Main extends AbstractApplication {
 
     createBrandTag() {
       let a = document.createElement("a");
-      a.href = "http://github.com/pistolshrimpgames/";
+      a.href = "https://github.com/pistolshrimpgames/ProceduralPlanet";
       a.innerHTML = "<div id='brandTag'><img id='brandTagImage' src='assets/textures/pistolshrimp_logoonly.png'>UQM Planet Generator</div>";
       document.body.appendChild(a);
     }
