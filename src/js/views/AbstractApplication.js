@@ -107,6 +107,10 @@ class AbstractApplication {
     }
 
     onKeyDown(e) {
+      if (e.target.nodeName != 'BODY') {
+        return;
+      }
+
       if (e.keyCode == '72')
   		{
   			var brandTag = document.getElementById("brandTag");
