@@ -20,126 +20,13 @@ import seedrandom from 'seedrandom'
 import randomString from 'crypto-random-string'
 import AtmosphereRing from 'views/AtmosphereRing.js'
 import randomLorem from 'random-lorem'
+import UqmPlanetTable from '../UqmPlanetTable.js'
 
 
 class Planet {
 
   constructor() {
 
-    this.UQM_PLANETTABLE = [
-      {
-        "type": "Acid",
-        "seeds" : [ "Wisejzo Guaciil Diniam" ]
-      },
-      {
-        "type": "Alkali",
-        "seeds": [ "Lati Guav Ziclivta", "Pipbivu Ecevi Peteme" ]
-      },
-      {
-        "type": "Azure",
-        "seeds": [ "Fujr" ]
-      },
-      {
-        "type": "Carbide",
-        "seeds": [ "Boci Raseeju Lersa" ]
-      },
-      {
-        "type": "Chlorine",
-        "seeds": [ "Kid Fejove", "Dohgosiv Gafbef", "Vepni", "Sajokog Iver" ]
-      },
-      {
-        "type": "Chondrite",
-        "seeds": [ "Cep Kamme", "Vezi", "Peros Nefgo Finp", "Ozzi" ]
-      },
-      {
-        "type": "Cimmerian",
-        "seeds": [ "Ofs" ]
-      },
-      {
-        "type": "Copper",
-        "seeds": [ 	"Roms", "Tear Lenda Tortif" ]
-      },
-      {
-        "type": "Dust",
-        "seeds": [ "Oke Olca Orehi" ]
-      },
-      {
-        "type": "Fluorescent",
-        "seeds": [ "Ufp Ad Pov", "Lek Lepko", "Nikco Goejan", "Oju", "Sobilb Itz" ]
-      },
-      {
-        "type": "Green",
-        "seeds": [ "Cij Ehezewe" ]
-      },
-      {
-        "type": "Halide",
-        "seeds": [ "Ardief Pawub" ]
-      },
-      {
-        "type": "Ice",
-        "seeds": [ "Kipviw Dog", "Eve Jahi", "Inkocno Vewjec Lei" ]
-      },
-      {
-        "type": "Iodine",
-        "seeds": [ "Wogmuv Ambo" ]
-      },
-      {
-        "type": "Magnetic",
-        "seeds": [ "Ridovo Not Zi" ]
-      },
-      {
-        "type": "Maroon",
-        "seeds" : [ "Ahdi Suvetdig" ]
-      },
-      {
-        "type": "Metal",
-        "seeds": [ "Uz Dodefaz", "Ojfe Anaz" ]
-      },
-      {
-        "type": "Neon",
-        "seeds" : [ "Renigpa Zol" ]
-      },
-      {
-        "type": "Opalescent",
-        "seeds": [ "Hijezber", "Ma Emhunge" ]
-      },
-      {
-        "type": "Primordial",
-        "seeds": [ "Simpo Wuhovusz Ho" ]
-      },
-      {
-        "type": "Purple",
-        "seeds": [ "Neno Bimeli Ceajuv" ]
-      },
-      {
-        "type": "Rainbow",
-        "seeds": [ "Jiwfoge Wekvic Ucuu", "Efzek Opemi", "Vasajlo Hulefhik", "Zop Utbugmi Wifcigik", "Vura" ]
-      },
-      {
-        "type": "Sapphire",
-        "seeds": [ "Juototis Jevoviz" ]
-      },
-      {
-        "type": "Treasure",
-        "seeds": [ "Mif Igwodem", "He Wazo", "Feuhiv Zosibo", "Ben Lebuwot" ]
-      },
-      {
-        "type": "Ultramarine",
-        "seeds": [ "Nosogpe" ]
-      },
-      {
-        "type": "Ultraviolet",
-        "seeds": [ "Mo Leiwjun Sis", "Fonzeet Len Itdifh" ]
-      },
-      {
-        "type": "Water",
-        "seeds": [ "Zehfen Vihcuhe", "Soc", "Noag", "Vek Piadowoo Zikijer", "Gafwef" ]
-      },
-      {
-        "type": "Xenolithic",
-        "seeds": [ "Evip Rin" ]
-      }
-    ];
     this.NON_UQM_PLANET = "NONE";
 
     this.seedString = "Scarlett";
@@ -155,7 +42,8 @@ class Planet {
     this.size = 1000;
     this.waterLevel = 0.0;
 
-    this.uqmPlanetTypes = this.getUqmPlanetTypes();
+    this.uqmPlanetTable = new UqmPlanetTable();
+    this.uqmPlanetTypes = this.uqmPlanetTable.getAllTypeNames();
     let nonechoice = [ this.NON_UQM_PLANET ];
     let choicelist = nonechoice.concat(this.uqmPlanetTypes);
     this.uqmPlanetTypeChoices = choicelist;
@@ -398,12 +286,10 @@ class Planet {
 
       this.clearPickPlanetSeedUI();
     } else {
-      let type = this.UQM_PLANETTABLE[0];
-      if (this.uqmPlanetType == "NONE") {
-        type = this.UQM_PLANETTABLE[Math.floor(Math.random() * this.UQM_PLANETTABLE.length)];
-      } else {
-        type = this.UQM_PLANETTABLE.find(m => m.type == this.uqmPlanetType);
-      }
+      let type = this.uqmPlanetType == "NONE"
+        ? this.uqmPlanetTable.getRandomPlanetType()
+        : this.uqmPlanetTable.findPlanetTypeByName(this.uqmPlanetType);
+
       let seeds = type.seeds;
       this.seedString = seeds[Math.floor(Math.random() * seeds.length)];
     }
@@ -427,7 +313,7 @@ class Planet {
 
   pickPlanetType() {
     let typeString = this.uqmPlanetType;
-    let type = this.UQM_PLANETTABLE.find(m => m.type == this.uqmPlanetType);
+    let type = this.uqmPlanetTable.findPlanetTypeByName(this.uqmPlanetType);
 
     if (type != null) {
       this.uqmPlanetSeedChoices = type.seeds;
@@ -490,15 +376,6 @@ class Planet {
       this.autoGenCountCurrent = 0;
       this.renderScene();
     }
-  }
-
-  getUqmPlanetTypes() {
-    let table = this.UQM_PLANETTABLE;
-    let types = [];
-    for (let i = 0; i < table.length; i++) {
-      types.push(table[i].type);
-    }
-    return types;
   }
 
   capitalizeFirstLetter(string) {

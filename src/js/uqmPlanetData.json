@@ -1,0 +1,114 @@
+[
+  {
+    "type": "Acid",
+    "seeds" : [ "Wisejzo Guaciil Diniam" ]
+  },
+  {
+    "type": "Alkali",
+    "seeds": [ "Lati Guav Ziclivta", "Pipbivu Ecevi Peteme" ]
+  },
+  {
+    "type": "Azure",
+    "seeds": [ "Fujr" ]
+  },
+  {
+    "type": "Carbide",
+    "seeds": [ "Boci Raseeju Lersa" ]
+  },
+  {
+    "type": "Chlorine",
+    "seeds": [ "Kid Fejove", "Dohgosiv Gafbef", "Vepni", "Sajokog Iver" ]
+  },
+  {
+    "type": "Chondrite",
+    "seeds": [ "Cep Kamme", "Vezi", "Peros Nefgo Finp", "Ozzi" ]
+  },
+  {
+    "type": "Cimmerian",
+    "seeds": [ "Ofs" ]
+  },
+  {
+    "type": "Copper",
+    "seeds": [ 	"Roms", "Tear Lenda Tortif" ]
+  },
+  {
+    "type": "Dust",
+    "seeds": [ "Oke Olca Orehi" ]
+  },
+  {
+    "type": "Fluorescent",
+    "seeds": [ "Ufp Ad Pov", "Lek Lepko", "Nikco Goejan", "Oju", "Sobilb Itz" ]
+  },
+  {
+    "type": "Green",
+    "seeds": [ "Cij Ehezewe" ]
+  },
+  {
+    "type": "Halide",
+    "seeds": [ "Ardief Pawub" ]
+  },
+  {
+    "type": "Ice",
+    "seeds": [ "Kipviw Dog", "Eve Jahi", "Inkocno Vewjec Lei" ]
+  },
+  {
+    "type": "Iodine",
+    "seeds": [ "Wogmuv Ambo" ]
+  },
+  {
+    "type": "Magnetic",
+    "seeds": [ "Ridovo Not Zi" ]
+  },
+  {
+    "type": "Maroon",
+    "seeds" : [ "Ahdi Suvetdig" ]
+  },
+  {
+    "type": "Metal",
+    "seeds": [ "Uz Dodefaz", "Ojfe Anaz" ]
+  },
+  {
+    "type": "Neon",
+    "seeds" : [ "Renigpa Zol" ]
+  },
+  {
+    "type": "Opalescent",
+    "seeds": [ "Hijezber", "Ma Emhunge" ]
+  },
+  {
+    "type": "Primordial",
+    "seeds": [ "Simpo Wuhovusz Ho" ]
+  },
+  {
+    "type": "Purple",
+    "seeds": [ "Neno Bimeli Ceajuv" ]
+  },
+  {
+    "type": "Rainbow",
+    "seeds": [ "Jiwfoge Wekvic Ucuu", "Efzek Opemi", "Vasajlo Hulefhik", "Zop Utbugmi Wifcigik", "Vura" ]
+  },
+  {
+    "type": "Sapphire",
+    "seeds": [ "Juototis Jevoviz" ]
+  },
+  {
+    "type": "Treasure",
+    "seeds": [ "Mif Igwodem", "He Wazo", "Feuhiv Zosibo", "Ben Lebuwot" ]
+  },
+  {
+    "type": "Ultramarine",
+    "seeds": [ "Nosogpe" ]
+  },
+  {
+    "type": "Ultraviolet",
+    "seeds": [ "Mo Leiwjun Sis", "Fonzeet Len Itdifh" ]
+  },
+  {
+    "type": "Water",
+    "seeds": [ "Zehfen Vihcuhe", "Soc", "Noag", "Vek Piadowoo Zikijer", "Gafwef" ]
+  },
+  {
+    "type": "Xenolithic",
+    "seeds": [ "Evip Rin" ]
+  }
+]
