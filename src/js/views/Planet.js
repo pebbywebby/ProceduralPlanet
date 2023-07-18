@@ -255,6 +255,10 @@ class Planet {
     this.uqmPlanetTypeControl.onFinishChange(value => { this.pickPlanetType(); });
 
     document.addEventListener('keydown', (event) => {
+      if (event.target.nodeName != 'BODY') {
+        return;
+      }
+
       if (event.keyCode == 32) {
         this.randomize();
       }
@@ -385,7 +389,7 @@ class Planet {
       if (n > 0.8) wordCount = 1;
       else if (n > 0.4) wordCount = 2;
       else wordCount = 3;
-  
+
       this.seedString = "";
       for (let i=0; i<wordCount; i++) {
         this.seedString += this.capitalizeFirstLetter(randomLorem({ min: 2, max: 8 }));
@@ -415,7 +419,7 @@ class Planet {
   randomizeUqm() {
     this.randomize(1);
     this.uqmPlanetSeedChoice = this.seedString;
-    
+
     if (this.uqmPlanetSeedChoiceControl != null) {
       this.uqmPlanetSeedChoiceControl.updateDisplay();
     }
@@ -443,7 +447,7 @@ class Planet {
       window.gui.remove(this.randomizeUqmButton);
       this.randomizeUqmButton = null;
     }
-    
+
     if (typeString != this.NON_UQM_PLANET) {
       this.uqmPlanetSeedChoiceControl = window.gui.add(this, "uqmPlanetSeedChoice", this.uqmPlanetSeedChoices );
       this.uqmPlanetSeedChoiceControl.onFinishChange(value => { this.pickPlanetSeed(); });
