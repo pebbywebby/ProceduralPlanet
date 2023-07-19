@@ -66,7 +66,6 @@ a
   left: 20px;
   color: #FFFFFF;
   background-color: rgba(0, 0, 0, 0.8);
-  width: 30%;
 }
 
 #brandTagImage
@@ -127,6 +126,27 @@ a
   font-size: 24px;
   line-height: 28px;
   font-family: "UQM-CommanderFont";
+}
+
+.hiddenTooltip {
+  position:absolute;
+  clip:rect(1px,1px,1px,1px)
+}
+
+.buttonTooltipContainer {
+    display: flex;
+    align-items: center;
+    margin-top: 16px;
+    min-height: 30px;
+
+}
+#copyTooltip {
+    display: none;
+    margin-left: 40px;
+    padding: 5px 12px;
+    background-color: #000000df;
+    border-radius: 4px;
+    color: #fff;
 }
 
 #instructions {

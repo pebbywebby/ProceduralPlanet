@@ -195,7 +195,9 @@ class Planet {
 
     let infoBox = document.createElement("div");
     infoBox.setAttribute("id", "infoBox");
-    infoBox.innerHTML = "Planet<br><div id='planetName'></div><br><div id='instructions'>H - Show/Hide UI<br>SPACEBAR - New Planet</div>";
+    infoBox.innerHTML = `Planet<br><div id='planetName'></div>
+    <button id='planetNameCopytoClipboard'>Copy to Clipboard</button><div id="copyTooltip">Copied</div><textarea class='hiddenTooltip' id="tooltipBox"></textarea>
+    <br><div id='instructions'>H - Show/Hide UI<br>SPACEBAR - New Planet</div>`;
     infoBoxHolder.appendChild(infoBox);
 
     let line = document.createElement("div");
@@ -227,6 +229,9 @@ class Planet {
 
     let newPlanetButton = document.getElementById("newPlanetButton");
     newPlanetButton.addEventListener('click', (e) => {this.randomize()} );
+
+    let copyPlanetNameButton = document.getElementById("planetNameCopytoClipboard");
+    copyPlanetNameButton.addEventListener('click', (e) => {this.copyPlanetNameToClipboard()} );
   }
 
   updatePlanetName() {
@@ -240,6 +245,20 @@ class Planet {
       planetNameMobile.innerHTML = this.seedString;
     }
   }
+
+  copyPlanetNameToClipboard() {
+    navigator.clipboard.writeText(this.seedString);
+    let tooltipBox = document.getElementById("tooltipBox");
+    //tooltipBox.value = window.location.href;
+    tooltipBox.focus();
+    
+    let tooltip = document.getElementById("copyTooltip");
+    tooltip.style.display = "inline";
+    setTimeout( function() {
+      let tooltip = document.getElementById("copyTooltip");
+      tooltip.style.display = "none";
+    }, 1000)
+  } 
 
   initSeed() {
     window.rng = seedrandom(this.seedString);
