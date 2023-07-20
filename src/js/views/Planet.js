@@ -1,15 +1,11 @@
 import * as THREE from 'three'
-import textureVert from 'shaders/texture.vert'
-import textureFrag from 'shaders/textureMap.frag'
-import normalMapFrag from 'shaders/normalMap.frag'
-import normalMapVert from 'shaders/normalMap.vert'
-import roughnessMapFrag from 'shaders/roughnessMap.frag'
 import Biome from 'views/Biome'
 import Atmosphere from 'views/Atmosphere.js'
 import NoiseMap from 'views/NoiseMap.js'
 import TextureMap from 'views/TextureMap.js'
 import NormalMap from 'views/NormalMap.js'
 import RoughnessMap from 'views/RoughnessMap.js'
+import TemperatureMap from 'views/TemperatureMap.js'
 import Clouds from 'views/Clouds.js'
 import Stars from 'views/Stars.js'
 import Nebula from 'views/Nebula.js'
@@ -42,6 +38,12 @@ class Planet {
     this.size = 1000;
     this.waterLevel = 0.0;
 
+    this.pole1Factor = 2;
+    this.pole2Factor = 2;
+    this.heightFactor = 5;
+    this.iciness = 0.7;
+    this.iceCutoff = 0.1;
+
     this.uqmPlanetTable = new UqmPlanetTable();
     this.uqmPlanetTypes = this.uqmPlanetTable.getAllTypeNames();
     let nonechoice = [ this.NON_UQM_PLANET ];
@@ -58,6 +60,7 @@ class Planet {
     this.textureMaps = [];
     this.normalMaps = [];
     this.roughnessMaps = [];
+    this.temperatureMaps = [];
 
     let matFolder = gui.addFolder('Material');
 
@@ -70,10 +73,27 @@ class Planet {
     this.normalScaleControl = matFolder.add(this, "normalScale", -3.0, 6.0).listen();
     this.normalScaleControl.onChange(value => { this.updateMaterial(); });
 
+    let biomeFolder = gui.addFolder('Biome Controls');
+
+    this.pole1FactorControl = biomeFolder.add(this, "pole1Factor", 0.0, 5.0);
+    this.pole1FactorControl.onChange(value => { this.updateMaterial(); this.renderTemperatureMap(); this.renderTextureMap(); });
+
+    this.pole2FactorControl = biomeFolder.add(this, "pole2Factor", 0.0, 5.0);
+    this.pole2FactorControl.onChange(value => { this.updateMaterial(); this.renderTemperatureMap(); this.renderTextureMap();});
+
+    this.heightFactorControl = biomeFolder.add(this, "heightFactor", 0.0, 10.0);
+    this.heightFactorControl.onChange(value => { this.updateMaterial(); this.renderTemperatureMap(); this.renderTextureMap();});
+
+    this.icinessControl = biomeFolder.add(this, "iciness", 0.0, 1.0);
+    this.icinessControl.onChange(value => { this.updateMaterial(); this.renderTemperatureMap(); this.renderTextureMap();});
+
+    //this.iceCutoff = biomeFolder.add(this, "iceCutoff", 0.0, 1.0);
+    //this.iceCutoff.onChange(value => { this.updateMaterial(); this.renderTemperatureMap(); });
+
     // debug options
     this.displayMap = "textureMap";
     let debugFolder = gui.addFolder('Debug');
-    this.displayMapControl = debugFolder.add(this, "displayMap", ["textureMap", "heightMap", "moistureMap", "normalMap", "roughnessMap"]);
+    this.displayMapControl = debugFolder.add(this, "displayMap", ["textureMap", "heightMap", "moistureMap", "normalMap", "roughnessMap", "temperatureMap"]);
     this.displayMapControl.onChange(value => { this.updateMaterial(); });
 
     this.showBiomeMap = false;
@@ -277,7 +297,7 @@ class Planet {
       if (n > 0.8) wordCount = 1;
       else if (n > 0.4) wordCount = 2;
       else wordCount = 3;
-
+  
       this.seedString = "";
       for (let i=0; i<wordCount; i++) {
         this.seedString += this.capitalizeFirstLetter(randomLorem({ min: 2, max: 8 }));
@@ -305,7 +325,7 @@ class Planet {
   randomizeUqm() {
     this.randomize(1);
     this.uqmPlanetSeedChoice = this.seedString;
-
+    
     if (this.uqmPlanetSeedChoiceControl != null) {
       this.uqmPlanetSeedChoiceControl.updateDisplay();
     }
@@ -313,7 +333,7 @@ class Planet {
 
   pickPlanetType() {
     let typeString = this.uqmPlanetType;
-    let type = this.uqmPlanetTable.findPlanetTypeByName(this.uqmPlanetType);
+    let type = this.UQM_PLANETTABLE.find(m => m.type == this.uqmPlanetType);
 
     if (type != null) {
       this.uqmPlanetSeedChoices = type.seeds;
@@ -333,7 +353,7 @@ class Planet {
       window.gui.remove(this.randomizeUqmButton);
       this.randomizeUqmButton = null;
     }
-
+    
     if (typeString != this.NON_UQM_PLANET) {
       this.uqmPlanetSeedChoiceControl = window.gui.add(this, "uqmPlanetSeedChoice", this.uqmPlanetSeedChoices );
       this.uqmPlanetSeedChoiceControl.onFinishChange(value => { this.pickPlanetSeed(); });
@@ -378,6 +398,15 @@ class Planet {
     }
   }
 
+  getUqmPlanetTypes() {
+    let table = this.UQM_PLANETTABLE;
+    let types = [];
+    for (let i = 0; i < table.length; i++) {
+      types.push(table[i].type);
+    }
+    return types;
+  }
+
   capitalizeFirstLetter(string) {
     return string.charAt(0).toUpperCase() + string.slice(1);
   }
@@ -389,6 +418,9 @@ class Planet {
 
     this.moistureMap = new NoiseMap();
     this.moistureMaps = this.moistureMap.maps;
+
+    this.temperatureMap = new TemperatureMap();
+    this.temperatureMaps = this.temperatureMap.maps;
 
     this.textureMap = new TextureMap();
     this.textureMaps = this.textureMap.maps;
@@ -428,7 +460,6 @@ class Planet {
     // this.clouds.resolution = this.resolution;
 
     this.updateNormalScaleForRes(this.resolution);
-    this.renderBiomeTexture();
     this.renderNebulaeGradient();
 
     this.stars.resolution = this.resolution;
@@ -468,13 +499,6 @@ class Planet {
       // doesRidged: 0
     });
 
-    this.textureMap.render({
-      resolution: this.resolution,
-      heightMaps: this.heightMaps,
-      moistureMaps: this.moistureMaps,
-      biomeMap: this.biome.texture
-    });
-
     this.normalMap.render({
       resolution: this.resolution,
       waterLevel: this.waterLevel,
@@ -485,9 +509,17 @@ class Planet {
     this.roughnessMap.render({
       resolution: this.resolution,
       heightMaps: this.heightMaps,
-      waterLevel: this.waterLevel
+      waterLevel: this.waterLevel,
+      landRoughness: 0.75,
+      waterRoughness: 0.9
     });
 
+    this.renderTemperatureMap();
+
+    this.renderBiomeTexture();
+
+    this.renderTextureMap();
+    
     // this.clouds.render({
     //   waterLevel: this.waterLevel
     // });
@@ -541,6 +573,11 @@ class Planet {
         material.normalMap = null;
         material.roughnessMap = null;
       }
+      else if (this.displayMap == "temperatureMap") {
+        material.map = this.temperatureMaps[i];
+        material.normalMap = null;
+        material.roughnessMap = null;
+      }
 
       material.needsUpdate = true;
     }
@@ -552,6 +589,28 @@ class Planet {
 
   renderNebulaeGradient() {
     this.nebulaeGradient.generateTexture();
+  }
+
+  renderTemperatureMap() {
+    this.temperatureMap.render({
+      resolution: this.resolution,
+      heightMaps: this.heightMaps,
+      pole1Factor: this.pole1Factor,
+      pole2Factor: this.pole2Factor,
+      heightFactor: this.heightFactor,
+      iciness: this.iciness
+    })
+  }
+
+  renderTextureMap() {
+    this.textureMap.render({
+      resolution: this.resolution,
+      heightMaps: this.heightMaps,
+      moistureMaps: this.moistureMaps,
+      biomeMap: this.biome.texture,
+      temperatureMaps: this.temperatureMaps,
+      iceCutoff: 0.1
+    });
   }
 
   createAtmosphere() {
