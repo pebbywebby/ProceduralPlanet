@@ -4,7 +4,7 @@ import shaderFrag from 'shaders/atmos.frag'
 
 class Atmosphere {
 
-  constructor() {
+  constructor(props) {
     this.view = new THREE.Object3D();
 
     this.time = 0.0;
@@ -21,8 +21,17 @@ class Atmosphere {
     // this.atmo4 = 0.46;
     // this.atmo5 = 0.36;
 
-    // this.randomizeColor();
     this.color = new THREE.Color(0x00ffff);
+    this.uqmPlanetType = props.uqmPlanetType;
+
+    if (this.uqmPlanetType === 'Emerald') {
+      this.color = new THREE.Color(0x00dc00);
+    } else if (this.uqmPlanetType === 'Ruby') {
+      this.color = new THREE.Color(0xdc0000);
+    } else if (this.uqmPlanetType === 'Sapphire') {
+      this.color = new THREE.Color(0x0000dc);
+    }
+
     this.size = 1002;
     this.atmosphere = 0.3;
     // window.gui.add(this, "atmosphere", 0.0, 1.0).step(0.01);

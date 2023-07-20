@@ -424,7 +424,7 @@ class Planet {
     this.updatePlanetName();
 
     this.seed = this.randRange(0, 1) * 1000.0;
-    this.waterLevel = this.randRange(0.1, 0.5);
+    this.waterLevel = this.isJewelPlanet(this.uqmPlanetType) ? 0.0 : this.randRange(0.1, 0.5);
     // this.clouds.resolution = this.resolution;
 
     this.updateNormalScaleForRes(this.resolution);
@@ -433,7 +433,11 @@ class Planet {
 
     this.stars.resolution = this.resolution;
     this.nebula.resolution = this.resolution;
-    this.atmosphere.randomizeColor();
+
+    if (!this.isJewelPlanet(this.uqmPlanetType)) {
+      this.atmosphere.randomizeColor();
+    }
+
     // this.clouds.randomizeColor();
     // this.clouds.color = this.atmosphere.color;
 
@@ -449,8 +453,8 @@ class Planet {
       res2: this.randRange(resMin, resMax),
       resMix: this.randRange(resMin, resMax),
       mixScale: this.randRange(0.5, 1.0),
-      doesRidged: Math.floor(this.randRange(0, 4))
-      // doesRidged: 1
+      doesRidged: Math.floor(this.randRange(0, 4)),
+      isJewel: this.isJewelPlanet(this.uqmPlanetType)
     });
 
     let resMod = this.randRange(3, 10);
@@ -464,8 +468,8 @@ class Planet {
       res2: this.randRange(resMin, resMax),
       resMix: this.randRange(resMin, resMax),
       mixScale: this.randRange(0.5, 1.0),
-      doesRidged: Math.floor(this.randRange(0, 4))
-      // doesRidged: 0
+      doesRidged: Math.floor(this.randRange(0, 4)),
+      isJewel: false
     });
 
     this.textureMap.render({
@@ -501,7 +505,6 @@ class Planet {
     });
 
     this.sun.render();
-
 
     window.renderQueue.addCallback(() => {
       this.updateMaterial();
@@ -547,7 +550,10 @@ class Planet {
   }
 
   renderBiomeTexture() {
-    this.biome.generateTexture({waterLevel: this.waterLevel});
+    this.biome.generateTexture({
+      waterLevel: this.waterLevel,
+      uqmPlanetType: this.uqmPlanetType
+    });
   }
 
   renderNebulaeGradient() {
@@ -555,7 +561,9 @@ class Planet {
   }
 
   createAtmosphere() {
-    this.atmosphere = new Atmosphere();
+    this.atmosphere = new Atmosphere({
+      uqmPlanetType: this.uqmPlanetType
+    });
     // this.atmosphere.color = this.glow.color;
     this.view.add(this.atmosphere.view);
   }
@@ -658,7 +666,11 @@ class Planet {
     if (!results) return null;
     if (!results[2]) return '';
     return decodeURIComponent(results[2].replace(/\+/g, " "));
-}
+  }
+
+  isJewelPlanet(uqmPlanetType) {
+    return uqmPlanetType === 'Emerald' || uqmPlanetType === 'Ruby' || uqmPlanetType === 'Sapphire';
+  }
 
 }
 
