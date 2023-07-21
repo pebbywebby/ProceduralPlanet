@@ -1,16 +1,16 @@
 @font-face {
   font-family: "UQM-3DO";
-  src: url('/assets/fonts/UQM-3DOMenuLabels.ttf') format('truetype');
+  src: url('../fonts/UQM-3DOMenuLabels.ttf') format('truetype');
 }
 
 @font-face {
   font-family: "UQM-CommanderFont";
-  src: url('/assets/fonts/UQM-CommanderFont.ttf') format('truetype');
+  src: url('../fonts/UQM-CommanderFont.ttf') format('truetype');
 }
 
 @font-face {
   font-family: "UQM-TinyFont";
-  src: url('/assets/fonts/UQM-TinyFont.ttf') format('truetype');
+  src: url('../fonts/UQM-TinyFont.ttf') format('truetype');
 }
 
 body {
