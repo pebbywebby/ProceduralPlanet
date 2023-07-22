@@ -2,7 +2,7 @@ import 'three'
 import 'three/examples/js/controls/OrbitControls'
 import 'three/examples/js/controls/VRControls'
 
-import dat from 'dat-gui'
+import dat from 'dat.gui'
 import Stats from 'stats-js'
 
 class AbstractApplication {
