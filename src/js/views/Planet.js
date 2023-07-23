@@ -102,7 +102,7 @@ class Planet {
     this.createStars();
     this.createNebula();
     this.createSun();
-    // this.createClouds();
+    this.createClouds();
     // this.createGlow();
 
     // this.atmosphereRing = new AtmosphereRing();
@@ -165,7 +165,7 @@ class Planet {
       this.ground.rotation.y += 0.0005;
       this.stars.view.rotation.y += 0.0003;
       this.nebula.view.rotation.y += 0.0003;
-      // this.clouds.view.rotation.y += 0.0007;
+      this.clouds.view.rotation.y += 0.0007;
     }
 
     this.atmosphere.update();
@@ -425,7 +425,7 @@ class Planet {
 
     this.seed = this.randRange(0, 1) * 1000.0;
     this.waterLevel = this.randRange(0.1, 0.5);
-    // this.clouds.resolution = this.resolution;
+    this.clouds.resolution = this.resolution;
 
     this.updateNormalScaleForRes(this.resolution);
     this.renderBiomeTexture();
@@ -435,7 +435,7 @@ class Planet {
     this.nebula.resolution = this.resolution;
     this.atmosphere.randomizeColor();
     // this.clouds.randomizeColor();
-    // this.clouds.color = this.atmosphere.color;
+    this.clouds.color = this.atmosphere.color;
 
     window.renderQueue.start();
 
@@ -488,9 +488,9 @@ class Planet {
       waterLevel: this.waterLevel
     });
 
-    // this.clouds.render({
-    //   waterLevel: this.waterLevel
-    // });
+    this.clouds.render({
+      waterLevel: this.waterLevel
+    });
 
     this.stars.render({
       nebulaeMap: this.nebulaeGradient.texture
