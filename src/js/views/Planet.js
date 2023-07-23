@@ -488,10 +488,6 @@ class Planet {
       waterLevel: this.waterLevel
     });
 
-    this.clouds.render({
-      waterLevel: this.waterLevel
-    });
-
     this.stars.render({
       nebulaeMap: this.nebulaeGradient.texture
     });
@@ -502,6 +498,9 @@ class Planet {
 
     this.sun.render();
 
+    this.clouds.render({
+      waterLevel: this.waterLevel
+    });
 
     window.renderQueue.addCallback(() => {
       this.updateMaterial();
