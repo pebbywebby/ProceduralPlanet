@@ -1,7 +1,7 @@
 // forked from https://github.com/superguigui/Wagner/blob/master/example/index.js
 
 import * as THREE from 'three'
-import dat from 'dat-gui'
+import dat from 'dat.gui'
 import WAGNER from '@superguigui/wagner/'
 import AbstractApplication from 'views/AbstractApplication'
 import BoxBlurPass from '@superguigui/wagner/src/passes/box-blur/BoxBlurPass'
