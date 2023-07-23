@@ -23,10 +23,26 @@ class Biome {
   generateTexture(props) {
 
     this.waterLevel = props.waterLevel;
+    this.uqmPlanetType = props.uqmPlanetType;
 
     let h = this.randRange(0.0, 1.0);
     let s = this.randRange(0.0, 0.7);
     let l = this.randRange(0.0, 0.6);
+
+    if (this.uqmPlanetType === 'Emerald') {
+      h = 0.38;
+      s = 0.37;
+      l = 0.28;
+    } else if (this.uqmPlanetType === 'Ruby') {
+      h = 0.97;
+      s = 0.87;
+      l = 0.42;
+    } else if (this.uqmPlanetType === 'Sapphire') {
+      h = 0.69;
+      s = 0.91;
+      l = 0.41;
+    }
+
     this.baseColor = new THREE.Color().setHSL(h, s, l);
     this.colorAngle = this.randRange(0.2, 0.4)
     this.satRange = this.randRange(0.3, 0.5);
@@ -37,18 +53,19 @@ class Biome {
 
     this.drawBase();
 
-    // circles
-    let numCircles = Math.round(this.randRange(50, 100));
-    numCircles = 100;
-    for (let i=0; i<numCircles; i++) {
-      this.randomGradientCircle();
+    if (!this.isJewelPlanet(this.uqmPlanetType)) {
+      // circles
+      let numCircles = Math.round(this.randRange(50, 100));
+      numCircles = 100;
+      for (let i=0; i<numCircles; i++) {
+        this.randomGradientCircle();
+      }
+
+      this.drawDetail();
+      this.drawInland();
+      this.drawBeach();
+      this.drawWater();
     }
-
-    this.drawDetail();
-    this.drawInland();
-    this.drawBeach();
-    this.drawWater();
-
 
     this.texture = new THREE.CanvasTexture(this.canvas);
   }
@@ -66,10 +83,14 @@ class Biome {
 
     for (let i=0; i<5; i++) {
       let x = 0;
-      let y =0;
+      let y = 0;
       let width = this.width;
       let height = this.height;
-      this.randomGradientRect(x, y, width, height);
+      if (this.isJewelPlanet(this.uqmPlanetType)) {
+        this.randomJewelStrip(this.uqmPlanetType, x, y, width, height);
+      } else {
+        this.randomGradientRect(x, y, width, height);
+      }
     }
   }
 
@@ -138,6 +159,23 @@ class Biome {
     let gradient = this.ctx.createLinearGradient(x1, y1, x2, y2);
 
     let c = this.randomColor();
+    gradient.addColorStop(this.randRange(0, 0.5), "rgba("+c.r+", "+c.g+", "+c.b+", 0.0)");
+    gradient.addColorStop(0.5, "rgba("+c.r+", "+c.g+", "+c.b+", 0.8)");
+    gradient.addColorStop(this.randRange(0.5, 1.0), "rgba("+c.r+", "+c.g+", "+c.b+", 0.0)");
+
+    this.ctx.fillStyle = gradient;
+    this.ctx.fillRect(x, y, width, height);
+  }
+
+  randomJewelStrip(uqmPlanetType, x, y, width, height) {
+    let x1 = this.randRange(0, this.width);
+    let y1 = this.randRange(0, this.height);
+    let x2 = this.randRange(0, this.width);
+    let y2 = this.randRange(0, this.height);
+
+    let gradient = this.ctx.createLinearGradient(x1, y1, x2, y2);
+
+    let c = this.randomJewelColor(uqmPlanetType);
     gradient.addColorStop(this.randRange(0, 0.5), "rgba("+c.r+", "+c.g+", "+c.b+", 0.0)");
     gradient.addColorStop(0.5, "rgba("+c.r+", "+c.g+", "+c.b+", 0.8)");
     gradient.addColorStop(this.randRange(0.5, 1.0), "rgba("+c.r+", "+c.g+", "+c.b+", 0.0)");
@@ -301,6 +339,34 @@ class Biome {
             b: Math.round(newColor.b*255)};
   }
 
+  randomJewelColor(uqmPlanetType) {
+    let newColor = this.baseColor.clone();
+    let hue = this.randRange(0.0, 1.0);
+    let saturation =  this.randRange(0.0, 1.0);
+
+    if (uqmPlanetType === 'Emerald') {
+      hue = 0.38;
+      saturation = this.randRange(0.2, 0.4);
+    } else if (uqmPlanetType === 'Ruby') {
+      hue = 0.97;
+      saturation = this.randRange(0.7, 0.9);
+    } else if (uqmPlanetType === 'Sapphire') {
+      hue = 0.69;
+      saturation = this.randRange(0.7, 0.9);
+    }
+
+    // Mostly dark colors, but some lighter ones for effect
+    let lightness = window.rng() < 0.9 ? this.randRange(0.05, 0.15) : this.randRange(0.45, 0.55);
+
+    newColor.setHSL(hue, saturation, lightness);
+
+    return {
+      r: Math.round(newColor.r * 255),
+      g: Math.round(newColor.g * 255),
+      b: Math.round(newColor.b * 255)
+    };
+  }
+
   randomColor() {
 
     let newColor = this.baseColor.clone();
@@ -383,6 +449,11 @@ class Biome {
     let dist = v2 - v1;
     return v1 + (dist * amount);
   }
+
+  isJewelPlanet(uqmPlanetType) {
+    return uqmPlanetType === 'Emerald' || uqmPlanetType === 'Ruby' || uqmPlanetType === 'Sapphire';
+  }
+
 
 }
 
