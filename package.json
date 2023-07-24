@@ -30,7 +30,6 @@
     "webpack-merge": "^4.1.0"
   },
   "dependencies": {
-    "@superguigui/wagner": "^0.1.5",
     "crypto-random-string": "^1.0.0",
     "dat.gui": "^0.7.9",
     "file-loader": "^1.1.6",
