@@ -17,8 +17,8 @@ vec3 getSphericalCoord(int index, float x, float y, float width) {
 
 	if (index == 0) {coord.x=width; coord.y=-y; coord.z=-x;}
 	else if (index == 1) {coord.x=-width; coord.y=-y; coord.z=x;}
-	else if (index == 2) {coord.x=x; coord.y=width; coord.z=y;}
-	else if (index == 3) {coord.x=x; coord.y=-width; coord.z=-y;}
+	else if (index == 2) {coord.x=x; coord.y=-width; coord.z=-y;}
+	else if (index == 3) {coord.x=x; coord.y=width; coord.z=y;}
 	else if (index == 4) {coord.x=x; coord.y=-y; coord.z=width;}
 	else if (index == 5) {coord.x=-x; coord.y=-y; coord.z=-width;}
 
@@ -34,8 +34,8 @@ void main() {
     float heightEffect = pow(height, heightFactor);
 
     vec3 scoord = getSphericalCoord(index, x*resolution, y*resolution, resolution);
-
+	//this could be better
     float poles =   pow((distance(scoord, pole1Coord))/1.414, pole1Factor)*
-                    pow((distance(scoord, pole2Coord))/1.414, pole1Factor)*iciness;
+                    pow((distance(scoord, pole2Coord))/1.414, pole2Factor)*iciness;
     gl_FragColor = vec4(vec3(poles-heightEffect), 1.0);
 }

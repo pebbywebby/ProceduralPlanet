@@ -49,16 +49,16 @@ export default class Stars {
     this.view.add(this.sphere);
   }
 
-  render(props) {
+  render(props, genSetting) {
 
-    this.seed = this.randRange(0, 1000);
+    this.seed = genSetting.randRange(0, 1000);
 
     this.starMap.render({
       seed: this.seed,
       resolution: this.resolution,
-      res1: this.randRange(0.5, 2.0),
-      res2: this.randRange(0.5, 2.0),
-      resMix: this.randRange(0.5, 2.0),
+      res1: genSetting.randRange(0.5, 2.0),
+      res2: genSetting.randRange(0.5, 2.0),
+      resMix: genSetting.randRange(0.5, 2.0),
       mixScale: 0.5,
       color1: this.color1,
       color2: this.color2,
@@ -74,13 +74,6 @@ export default class Stars {
       let material = this.materials[i];
       material.map = this.starMaps[i];
     }
-  }
-
-
-  randRange(low, high) {
-    let range = high - low;
-    let n = window.rng() * range;
-    return low + n;
   }
 
   computeGeometry(geometry) {

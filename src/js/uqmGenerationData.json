@@ -1,0 +1,42 @@
+[
+    {
+        "type": "unknown",
+        "heightMap": {"resMin": 0.01, "resMax": 5.0, "mixScaleMin": 0.5, "mixScaleMax": 1.0, "doesRidgedMin": 0, "doesRidgedMax": 4},
+        "moistureMap": {"resMin": 0.03, "resMax": 30.0, "mixScaleMin": 0.5, "mixScaleMax": 1.0, "doesRidgedMin": 0, "doesRidgedMax": 4},
+        "colorPalette": [{"hMin": 0.0, "hMax": 1.0, "sMin": 0.3, "sMax": 0.7, "lMin": 0.0, "lMax": 0.6}],
+        "waterColor": {"hMin": 0.5, "hMax": 0.7, "sMin": 0.0, "sMax": 0.7, "lMin": 0.0, "lMax": 0.6},
+        "waterLevel": {"min": 0.1, "max": 0.5},
+        "pole1Factor": {"min": 1.8, "max": 2.2},
+        "pole2Factor": {"min": 1.8, "max": 2.2},
+        "heightFactor": {"min": 5, "max": 7},
+        "iciness": {"min": 0.4, "max": 1.0},
+        "iceCutoff": {"min": 0.05, "max": 0.2}
+    },
+    {
+        "type": "Water",
+        "heightMap": {"resMin": 0.01, "resMax": 5.0, "mixScaleMin": 0.5, "mixScaleMax": 1.0, "doesRidgedMin": 0, "doesRidgedMax": 4},
+        "moistureMap": {"resMin": 0.03, "resMax": 30.0, "mixScaleMin": 0.5, "mixScaleMax": 1.0, "doesRidgedMin": 0, "doesRidgedMax": 4},
+        "colorPalette": [{"hMin": 0.15, "hMax": 0.3, "sMin": 0.3, "sMax": 0.7, "lMin": 0.0, "lMax": 0.6}],
+        "waterColor": {"hMin": 0.5, "hMax": 0.7, "sMin": 0.3, "sMax": 1.0, "lMin": 0.0, "lMax": 0.5},
+        "circleSize": {"min": 50, "max": 250},
+        "waterLevel": {"min": 0.5, "max": 0.9},
+        "pole1Factor": {"min": 1.8, "max": 2.2},
+        "pole2Factor": {"min": 1.8, "max": 2.2},
+        "heightFactor": {"min": 5, "max": 7},
+        "iciness": {"min": 0.6, "max": 1.0},
+        "iceCutoff": {"min": 0.05, "max": 0.2}
+    },
+    {
+        "type": "Ice",
+        "heightMap": {"resMin": 0.01, "resMax": 5.0, "mixScaleMin": 0.5, "mixScaleMax": 1.0, "doesRidgedMin": 0, "doesRidgedMax": 4},
+        "moistureMap": {"resMin": 0.03, "resMax": 30.0, "mixScaleMin": 0.5, "mixScaleMax": 1.0, "doesRidgedMin": 0, "doesRidgedMax": 4},
+        "colorPalette": [{"hMin": 0.0, "hMax": 1.0, "sMin": 0.3, "sMax": 0.7, "lMin": 0.0, "lMax": 0.6}],
+        "waterColor": {"hMin": 0.5, "hMax": 0.7, "sMin": 0.3, "sMax": 0.7, "lMin": 0.0, "lMax": 0.6},
+        "waterLevel": {"min": 0.1, "max": 0.3},
+        "pole1Factor": {"min": 1.8, "max": 2.2},
+        "pole2Factor": {"min": 1.8, "max": 2.2},
+        "heightFactor": {"min": 3, "max": 7},
+        "iciness": {"min": 0.2, "max": 0.4},
+        "iceCutoff": {"min": 0.1, "max": 0.2}
+    }
+]

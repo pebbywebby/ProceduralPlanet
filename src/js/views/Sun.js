@@ -19,14 +19,14 @@ export default class Sun {
 
   }
 
-  createLenseFlare() {
+  createLenseFlare(genSetting) {
 
-    let h = this.randRange(0,1);
+    let h = genSetting.randRange(0,1);
     let s = 1.0;
     let l = 1.0;
     var sunColor = new THREE.Color().setHSL(h, s, l);
-    var sunColor2 = new THREE.Color().setHSL(this.randRange(0,1), s, 0.5);
-    let sunSize = this.randRange(1000, 2000);
+    var sunColor2 = new THREE.Color().setHSL(genSetting.randRange(0,1), s, 0.5);
+    let sunSize = genSetting.randRange(1000, 2000);
     sunSize = 1500;
     this.lensFlare = new THREE.LensFlare( this.sunTexture.texture, sunSize, 0.0, THREE.AdditiveBlending, sunColor );
     this.lensFlare.add(this.sunTexture.texture, sunSize*2, 0.1, THREE.AdditiveBlending, sunColor, 0.2);
@@ -34,32 +34,32 @@ export default class Sun {
 
     let numFlares = 15;
     for (let i=0; i<numFlares; i++) {
-      let size = this.randRange(5, 200);
+      let size = genSetting.randRange(5, 200);
       // size = Math.pow(size, 2) * 200;
-      let offset = this.randRange(0.05, 0.4);
-      let color = this.randomColor();
-      let alpha = this.randRange(0.1, 0.3);
+      let offset = genSetting.randRange(0.05, 0.4);
+      let color = this.randomColor(genSetting);
+      let alpha = genSetting.randRange(0.1, 0.3);
       this.lensFlare.add(this.textureBlur, size, offset, THREE.AdditiveBlending, color, alpha);
     }
 
     numFlares = 5;
     for (let i=0; i<numFlares; i++) {
-      let size = this.randRange(5, 200);
+      let size = genSetting.randRange(5, 200);
       // size = Math.pow(size, 2) * 200;
-      let offset = this.randRange(-0.05, -0.2);
-      let color = this.randomColor();
-      let alpha = this.randRange(0.1, 0.3);
+      let offset = genSetting.randRange(-0.05, -0.2);
+      let color = this.randomColor(genSetting);
+      let alpha = genSetting.randRange(0.1, 0.3);
       this.lensFlare.add(this.textureBlur, size, offset, THREE.AdditiveBlending, color, alpha);
     }
 
 
     let numRings = 3;
     for (let i=0; i<numRings; i++) {
-      let size = this.randRange(200, 400);
+      let size = genSetting.randRange(200, 400);
       // size = Math.pow(size, 2) * 200;
-      let offset = this.randRange(-0.1, 0.2);
-      let color = this.randomColor();
-      let alpha = this.randRange(0, 0.1);
+      let offset = genSetting.randRange(-0.1, 0.2);
+      let color = this.randomColor(genSetting);
+      let alpha = genSetting.randRange(0, 0.1);
       this.lensFlare.add(this.textureRing, size, offset, THREE.AdditiveBlending, color, alpha);
     }
 
@@ -67,25 +67,19 @@ export default class Sun {
     this.view.add( this.lensFlare );
   }
 
-  randomColor() {
-    let h = this.randRange(0, 1);
-    let s = this.randRange(0, 0.9);
+  randomColor(genSetting) {
+    let h = genSetting.randRange(0, 1);
+    let s = genSetting.randRange(0, 0.9);
     let l = 0.5;
     let color = new THREE.Color().setHSL(h, s, l);
     return color;
   }
 
-  randRange(low, high) {
-    let range = high - low;
-    let n = Math.random() * range;
-    return low + n;
-  }
+  render(genSetting) {
 
-  render() {
-
-    this.sunTexture.generateTexture();
+    this.sunTexture.generateTexture(genSetting);
     this.view.remove(this.lensFlare);
-    this.createLenseFlare();
+    this.createLenseFlare(genSetting);
 
     // this.sunTexture.generateTexture();
     //

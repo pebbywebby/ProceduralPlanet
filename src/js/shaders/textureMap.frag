@@ -33,7 +33,7 @@ void main() {
 
 	// color = vec4(1.0);
 
-	if(temp < 0.1) //temperary fix
+	if(temp < 0.1) //temporary fix
 		gl_FragColor = vec4(1.0);
 	else
 		gl_FragColor = color;
