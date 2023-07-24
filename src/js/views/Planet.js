@@ -128,7 +128,7 @@ class Planet {
 
     window.gui.add(this, "rotate");
 
-    this.resolutionControl = window.gui.add(this, "resolution", [256, 512, 1024, 2048, 4096]);
+    this.resolutionControl = window.gui.add(this, "resolution", [64, 128, 256, 512, 1024, 2048, 4096]);
     this.resolutionControl.onChange(value => { this.regenerate(); });
 
     debugFolder.add(this, "autoGenerate");
