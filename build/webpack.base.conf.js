@@ -71,13 +71,14 @@ module.exports = {
             {
                 test: /\.ttf$/,
                 use: [
-                  {
-                    loader: 'ttf-loader',
-                    options: {
-                      name: './fonts/[hash].[ext]',
+                    {
+                        loader: "file-loader",
+                        options: {
+                            name: "[name].[ext]",
+                            outputPath: "assets/fonts/",
+                        },
                     },
-                  },
-               ]
+                ]
             },
             { test: /\.(glsl|frag|vert)$/, loader: 'raw-loader', exclude: /node_modules/ },
             { test: /\.(glsl|frag|vert)$/, loader: 'glslify-loader', exclude: /node_modules/ },

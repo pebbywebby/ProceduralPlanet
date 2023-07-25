@@ -9,6 +9,7 @@ uniform float res2;
 uniform float resMix;
 uniform float mixScale;
 uniform float doesRidged;
+uniform bool isJewel;
 const int octaves = 16;
 
 // #define M_PI 3.1415926535897932384626433832795;
@@ -55,6 +56,15 @@ float baseNoise(vec3 pos, float frq, float seed ) {
 	// increase contrast
 	n = ( (n - 0.5) * 2.0 ) + 0.5;
 
+	return n;
+}
+
+float jewelNoise(vec3 pos, float seed ) {
+	// There's no deep logic behind this, it's just created with trial and error based on the other noise functions to
+	// achieve bigger, sharper lines and areas instead of a "watercolory" map
+	float n = noise(3.0 * vec3(pos + seed));
+	n = (n + 1.0) * 0.5;
+	n = 2.0 * (0.5 - abs(0.5 - n));
 	return n;
 }
 
@@ -129,6 +139,16 @@ void main() {
 	vec3 sphericalCoord = getSphericalCoord(index, x*resolution, y*resolution, resolution);
 
 	float sub1, sub2, sub3, n;
+
+	if (isJewel) {
+		sub1 = jewelNoise(sphericalCoord, seed + 16.432);
+		sub2 = jewelNoise(sphericalCoord, seed + 47.991);
+		n = jewelNoise(sphericalCoord + vec3((sub1 / sub2) * 0.1), seed + 20.187);
+
+		gl_FragColor = vec4(vec3(n), 1.0);
+
+		return;
+	}
 
 	float resMod = 1.0; // overall res magnification
 	float resMod2 = mixScale; // minimum res mod

@@ -222,7 +222,6 @@ class Biome {
     let dist = v2 - v1;
     return v1 + (dist * amount);
   }
-
 }
 
 export default Biome;

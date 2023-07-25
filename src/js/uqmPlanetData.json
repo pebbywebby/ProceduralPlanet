@@ -36,6 +36,10 @@
     "seeds": [ "Oke Olca Orehi" ]
   },
   {
+    "type": "Emerald",
+    "seeds": [ "Ternajil Evi Civz", "Ze Tikepoj Ovf", "Usaluor Tik", "Fimje Tehsul" ]
+  },
+  {
     "type": "Fluorescent",
     "seeds": [ "Ufp Ad Pov", "Lek Lepko", "Nikco Goejan", "Oju", "Sobilb Itz" ]
   },
@@ -88,8 +92,12 @@
     "seeds": [ "Jiwfoge Wekvic Ucuu", "Efzek Opemi", "Vasajlo Hulefhik", "Zop Utbugmi Wifcigik", "Vura" ]
   },
   {
+    "type": "Ruby",
+    "seeds": [ "Fihivo Ceroff", "Hid Coap", "Tiwjafiz", "Cewmupmi Hon" ]
+  },
+  {
     "type": "Sapphire",
-    "seeds": [ "Juototis Jevoviz" ]
+    "seeds": [ "Honhoju Cileliwt Kun", "Veggupi Tucjaom", "Pejigr Vomdin Romaf", "Razt Herec Ari" ]
   },
   {
     "type": "Treasure",

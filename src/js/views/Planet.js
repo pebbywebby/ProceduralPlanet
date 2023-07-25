@@ -234,7 +234,7 @@ class Planet {
     this.createStars();
     this.createNebula();
     this.createSun();
-    // this.createClouds();
+    this.createClouds();
     // this.createGlow();
 
     // this.atmosphereRing = new AtmosphereRing();
@@ -260,7 +260,7 @@ class Planet {
 
     window.gui.add(this, "rotate");
 
-    this.resolutionControl = window.gui.add(this, "resolution", [256, 512, 1024, 2048, 4096]);
+    this.resolutionControl = window.gui.add(this, "resolution", [64, 128, 256, 512, 1024, 2048, 4096]);
     this.resolutionControl.onChange(value => { this.regenerate(); });
 
     debugFolder.add(this, "autoGenerate");
@@ -300,7 +300,7 @@ class Planet {
       this.ground.rotation.y += 0.0005;
       this.stars.view.rotation.y += 0.0003;
       this.nebula.view.rotation.y += 0.0003;
-      // this.clouds.view.rotation.y += 0.0007;
+      this.clouds.view.rotation.y += 0.0007;
     }
 
     this.atmosphere.update();
@@ -583,7 +583,7 @@ class Planet {
     this.nebula.resolution = this.resolution;
     this.atmosphere.randomizeColor(this.generatorSettings);
     // this.clouds.randomizeColor();
-    // this.clouds.color = this.atmosphere.color;
+    this.clouds.color = this.atmosphere.color;
 
     window.renderQueue.start();
 
@@ -609,6 +609,9 @@ class Planet {
 
     this.sun.render(this.generatorSettings);
 
+    this.clouds.render({
+      waterLevel: this.waterLevel
+    });
 
     window.renderQueue.addCallback(() => {
       this.updateMaterial();
@@ -734,7 +737,9 @@ class Planet {
   }
 
   createAtmosphere() {
-    this.atmosphere = new Atmosphere();
+    this.atmosphere = new Atmosphere({
+      uqmPlanetType: this.uqmPlanetType
+    });
     // this.atmosphere.color = this.glow.color;
     this.view.add(this.atmosphere.view);
   }
@@ -831,6 +836,7 @@ class Planet {
     if (!results) return null;
     if (!results[2]) return '';
     return decodeURIComponent(results[2].replace(/\+/g, " "));
+  }
   }
 
 }

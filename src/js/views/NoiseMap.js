@@ -24,7 +24,8 @@ class NoiseMap extends Map {
           res2: {type: "f", value: 0},
           resMix: {type: "f", value: 0},
           mixScale: {type: "f", value: 0},
-          doesRidged: {type: "f", value: 0}
+          doesRidged: {type: "f", value: 0},
+          isJewel: {type: "b", value: false}
         },
         vertexShader: vertShader,
         fragmentShader: fragShader,
@@ -41,6 +42,7 @@ class NoiseMap extends Map {
     // props.res2
     // props.resMix
     // props.mixScale
+    // props.isJewel
 
     let resolution = props.resolution;
 
@@ -52,6 +54,7 @@ class NoiseMap extends Map {
       this.mats[i].uniforms.resMix.value = props.resMix;
       this.mats[i].uniforms.mixScale.value = props.mixScale;
       this.mats[i].uniforms.doesRidged.value = props.doesRidged;
+      this.mats[i].uniforms.isJewel.value = props.isJewel;
       this.mats[i].needsUpdate = true;
     }
 
