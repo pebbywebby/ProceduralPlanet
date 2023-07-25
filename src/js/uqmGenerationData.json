@@ -73,7 +73,7 @@
         "isJewel": true
     },
     {
-        "type": "Saphire",
+        "type": "Sapphire",
         "heightMap": {"resMin": 0.01, "resMax": 5.0, "mixScaleMin": 0.5, "mixScaleMax": 1.0, "doesRidgedMin": 0, "doesRidgedMax": 4},
         "moistureMap": {"resMin": 0.03, "resMax": 30.0, "mixScaleMin": -1.0, "mixScaleMax": 0.0, "doesRidgedMin": 0, "doesRidgedMax": 4},
         "colorPalette": [{"hMin": 0.6, "hMax": 0.7, "sMin": 0.6, "sMax": 0.8, "lMin": 0.2, "lMax": 0.8},
