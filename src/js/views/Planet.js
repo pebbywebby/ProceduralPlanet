@@ -19,11 +19,10 @@ import randomLorem from 'random-lorem'
 import UqmPlanetTable from '../UqmPlanetTable.js'
 import UqmGenerationTable from '../UqmGenerationTable.js'
 
-//for sanity checking
-const clamp = (num, min, max) => Math.min(Math.max(num, min), max);
-
 class GeneratorSettings {
-  constructor(seedString, genData) {
+  //I would've liked to have made this a constructor and simply make a new object each time but that runs into issues
+  //with the controls
+  set(seedString, genData) {
     this.seedString = seedString;
     this.rng = seedrandom(this.seedString);
     this.seed = this.randRange(0, 1) * 1000.0;
@@ -36,6 +35,7 @@ class GeneratorSettings {
     this.heightFactor = this.randRange(genData.heightFactor.min, genData.heightFactor.max);
     this.iciness = this.randRange(genData.iciness.min, genData.iciness.max);
     this.iceCutoff = this.randRange(genData.iceCutoff.min, genData.iceCutoff.max);
+    this.isJewel = genData.isJewel;
 
     //height map settings
     this.heightMap = {res1: this.randRange(genData.heightMap.resMin, genData.heightMap.resMax),
@@ -49,7 +49,15 @@ class GeneratorSettings {
                         res2: this.randRange(genData.moistureMap.resMin, genData.moistureMap.resMax),
                         resMix: this.randRange(genData.moistureMap.resMin, genData.moistureMap.resMax),
                         mixScale: this.randRange(genData.moistureMap.mixScaleMin, genData.moistureMap.mixScaleMax),
-                        doesRidge: Math.floor(this.randRange(genData.moistureMap.doesRidgedMin, genData.moistureMap.doesRidgedMax))}
+                        doesRidged: Math.floor(this.randRange(genData.moistureMap.doesRidgedMin, genData.moistureMap.doesRidgedMax))}
+    
+    this.cloudMap = {res1: this.randRange(0.1, 1.0),
+                     res2: this.randRange(0.1, 1.0),
+                     resMix: this.randRange(0.1, 1.0),
+                     mixScale: this.randRange(0.1, 1.0)}
+
+    if(this.isJewel == true)
+      this.moistureMap.resMix = 0;
 
     //biome map settings
     this.paletteNum = 0;
@@ -93,62 +101,135 @@ class GeneratorSettings {
                                 offset1: this.randRange(0, 0.5), offset2: this.randRange(0.5, 1.0),
                                 color: this.randomColor()}
     }
-    
   }
 
   randRange(low, high) {
     let range = high - low;
     let n = this.rng() * range;
-    return clamp(low + n, low, high);
+    return low + n;
   }
 
   randomColor() {
     this.paletteNum += 1;
     let palette = this.colorPalette[this.paletteNum % this.colorPalette.length];
 
-    let h = clamp(this.randRange(palette.hMin, palette.hMax), 0.0, 1.0);
-    let s = clamp(this.randRange(palette.sMin, palette.sMax), 0.0, 1.0);
-    let l = clamp(this.randRange(palette.lMin, palette.lMax), 0.0, 1.0);
+    let h = this.randRange(palette.hMin, palette.hMax);
+    let s = this.randRange(palette.sMin, palette.sMax);
+    let l = this.randRange(palette.lMin, palette.lMax);
 
     return new THREE.Color().setHSL(h, s, l);
   }
 
   addControls(planet)
   {
-    this.gencon = window.gui.addFolder('Generation Controls');
+    this.generationControls = window.gui.addFolder('Generation Controls');
 
-    this.waterLevelControl = this.gencon.add(this, "waterLevel", 0.0, 1.0);
-    this.waterLevelControl.onChange(value => { this.waterLevel = clamp(value, 0.0, 1.0);
-      planet.renderNormalMap(this); planet.renderRoughnessMap(this);
-      planet.renderBiomeTexture(this); planet.renderTextureMap(this); });
+    //water controls
+    this.waterControls = this.generationControls.addFolder('Water Controls');
+    this.waterLevelControl = this.waterControls.add(this, "waterLevel", 0.0, 1.0);
+    this.waterLevelControl.onChange(value => {
+      if(planet.genSettingsChanged != true) {
+        planet.renderNormalMap(this); planet.renderRoughnessMap(this);
+        planet.renderBiomeTexture(this); planet.renderTextureMap(this);
+        planet.genSettingsChanged = true;
+    }});
 
-    this.waterColorHControl = this.gencon.add(this, "waterColorH", 0.0, 1.0);
-    this.waterColorHControl.onChange(value => { this.waterColorH = clamp(value, 0.0, 1.0);
-      this.waterColor = new THREE.Color().setHSL(this.waterColorH, this.waterColorS, this.waterColorL);
-      planet.renderBiomeTexture(this); planet.renderTextureMap(this); });
-    this.waterColorSControl = this.gencon.add(this, "waterColorS", 0.0, 1.0);
-    this.waterColorSControl.onChange(value => { this.waterColorS = clamp(value, 0.0, 1.0);
-      this.waterColor = new THREE.Color().setHSL(this.waterColorH, this.waterColorS, this.waterColorL);
-      planet.renderBiomeTexture(this); planet.renderTextureMap(this); });
-    this.waterColorLControl = this.gencon.add(this, "waterColorL", 0.0, 1.0);
-    this.waterColorLControl.onChange(value => { this.waterColorL = clamp(value, 0.0, 1.0);
-      this.waterColor = new THREE.Color().setHSL(this.waterColorH, this.waterColorS, this.waterColorL);
-      planet.renderBiomeTexture(this); planet.renderTextureMap(this); });
+    this.waterColorHControl = this.waterControls.add(this, "waterColorH", 0.0, 1.0);
+    this.waterColorHControl.onChange(value => {
+      if(planet.genSettingsChanged != true) {
+        this.waterColor = new THREE.Color().setHSL(this.waterColorH, this.waterColorS, this.waterColorL);
+        planet.renderBiomeTexture(this); planet.renderTextureMap(this);
+        planet.genSettingsChanged = true;
+    }});
+    this.waterColorSControl = this.waterControls.add(this, "waterColorS", 0.0, 1.0);
+    this.waterColorSControl.onChange(value => {
+      if(planet.genSettingsChanged != true) {
+        this.waterColor = new THREE.Color().setHSL(this.waterColorH, this.waterColorS, this.waterColorL);
+        planet.renderBiomeTexture(this); planet.renderTextureMap(this);
+        planet.genSettingsChanged = true;
+    }});
+    this.waterColorLControl = this.waterControls.add(this, "waterColorL", 0.0, 1.0);
+    this.waterColorLControl.onChange(value => {
+      if(planet.genSettingsChanged != true) {
+        this.waterColor = new THREE.Color().setHSL(this.waterColorH, this.waterColorS, this.waterColorL);
+        planet.renderBiomeTexture(this); planet.renderTextureMap(this);
+        planet.genSettingsChanged = true;
+    }});
   
-    this.pole1FactorControl = this.gencon.add(this, "pole1Factor", 0.0, 5.0);
-    this.pole1FactorControl.onChange(value => { planet.renderTemperatureMap(this); planet.renderTextureMap(this); });
-  
-    this.pole2FactorControl = this.gencon.add(this, "pole2Factor", 0.0, 5.0);
-    this.pole2FactorControl.onChange(value => { planet.renderTemperatureMap(this); planet.renderTextureMap(this);});
-  
-    this.heightFactorControl = this.gencon.add(this, "heightFactor", 0.0, 10.0);
-    this.heightFactorControl.onChange(value => { planet.renderTemperatureMap(this); planet.renderTextureMap(this);});
-  
-    this.icinessControl = this.gencon.add(this, "iciness", 0.0, 1.0);
-    this.icinessControl.onChange(value => { planet.renderTemperatureMap(this); planet.renderTextureMap(this);});
-
-    //this.iceCutoffControl = this.gencon.add(this, "iceCutoff", 0.05, 0.3);
+    //ice controls
+    this.iceControls = this.generationControls.addFolder('Ice Controls');
+    this.pole1FactorControl = this.iceControls.add(this, "pole1Factor", 0.0, 5.0);
+    this.pole1FactorControl.onChange(value => {
+      if(planet.genSettingsChanged != true) {
+        planet.renderTemperatureMap(this); planet.renderTextureMap(this); planet.renderNormalMap(this);
+        planet.genSettingsChanged = true;
+    }});
+    this.pole2FactorControl = this.iceControls.add(this, "pole2Factor", 0.0, 5.0);
+    this.pole2FactorControl.onChange(value => {
+      if(planet.genSettingsChanged != true) {
+        planet.renderTemperatureMap(this); planet.renderTextureMap(this); planet.renderNormalMap(this);
+        planet.genSettingsChanged = true;
+    }});
+    this.heightFactorControl = this.iceControls.add(this, "heightFactor", 0.0, 10.0);
+    this.heightFactorControl.onChange(value => {
+      if(planet.genSettingsChanged != true) {
+        planet.renderTemperatureMap(this); planet.renderTextureMap(this); planet.renderNormalMap(this);
+        planet.genSettingsChanged = true;
+    }});
+    this.icinessControl = this.iceControls.add(this, "iciness", -1.0, 1.0);
+    this.icinessControl.onChange(value => {
+      if(planet.genSettingsChanged != true) {
+        planet.renderTemperatureMap(this); planet.renderTextureMap(this); planet.renderNormalMap(this);
+        planet.genSettingsChanged = true;
+    }});
+    //this.iceCutoffControl = this.generationControls.add(this, "iceCutoff", 0.05, 0.3);
     //this.iceCutoffControl.onChange(value => { planet.renderTextureMap(this);});
+
+    //heightmap controls
+    this.hmapControls = this.generationControls.addFolder('Height Map Controls');
+    this.hmapRes1 = this.hmapControls.add(this.heightMap, "res1", 0.0, 5.0);
+    this.hmapRes1.onChange(value => {
+      if(planet.genSettingsChanged != true) {
+        this.heightMap.res2 = value; this.heightMap.resMix = value;
+        planet.renderHeightMap(this); planet.renderTemperatureMap(this); planet.renderTextureMap(this); planet.renderNormalMap(this);
+        planet.genSettingsChanged = true;
+        console.error("error");
+    }});
+    this.hmapMixScale = this.hmapControls.add(this.heightMap, "mixScale", 0.0, 1.0);
+    this.hmapMixScale.onChange(value => {
+      if(planet.genSettingsChanged != true) {
+        planet.renderHeightMap(this); planet.renderTemperatureMap(this); planet.renderTextureMap(this); planet.renderNormalMap(this);
+        planet.genSettingsChanged = true;
+    }});
+    this.hmapDoesRidged = this.hmapControls.add(this.heightMap, "doesRidged", 0, 5, 1);
+    this.hmapDoesRidged.onChange(value => {
+      if(planet.genSettingsChanged != true) {
+        planet.renderHeightMap(this); planet.renderTemperatureMap(this); planet.renderTextureMap(this); planet.renderNormalMap(this);
+        planet.genSettingsChanged = true;
+    }});
+
+    //moisturemap controls
+    this.mmapControls = this.generationControls.addFolder('Moisture Map Controls');
+    this.mmapRes1 = this.mmapControls.add(this.moistureMap, "res1", 0.0, 30.0);
+    this.mmapRes1.onChange(value => {
+      if(planet.genSettingsChanged != true) {
+        this.moistureMap.res2 = value; this.moistureMap.resMix = value;
+        if(this.isJewel != true) { this.moistureMap.resMix = 0; }
+        planet.renderMoistureMap(this); planet.renderTextureMap(this); planet.renderNormalMap(this);
+        planet.genSettingsChanged = true;
+    }});
+    this.mmapMixScale = this.mmapControls.add(this.moistureMap, "mixScale", 0.0, 1.0);
+    this.mmapMixScale.onChange(value => {
+      if(planet.genSettingsChanged != true) {
+        planet.renderMoistureMap(this); planet.renderTextureMap(this); planet.renderNormalMap(this);
+        planet.genSettingsChanged = true;
+    }});
+    this.mmapDoesRidged = this.mmapControls.add(this.moistureMap, "doesRidged", 0, 5, 1);
+    this.mmapDoesRidged.onChange(value => {
+      if(planet.genSettingsChanged != true) {
+        planet.renderMoistureMap(this); planet.renderTextureMap(this); planet.renderNormalMap(this);
+        planet.genSettingsChanged = true;
+    }});
   }
 }
 
@@ -182,7 +263,8 @@ class Planet {
     this.uqmGenerationType = "unknown";
     this.uqmGenerationTypes = this.uqmGenerationTable.getAllTypeNames();
 
-    //this.generatorSettings = new GeneratorSettings();
+    this.generatorSettings = new GeneratorSettings();
+    this.genSettingsChanged = false;  //ensures only one rerender can happen per frame
 
     this.heightMaps = [];
     this.moistureMaps = [];
@@ -296,6 +378,7 @@ class Planet {
   }
 
   update() {
+    this.genSettingsChanged = false;
     if (this.rotate) {
       this.ground.rotation.y += 0.0005;
       this.stars.view.rotation.y += 0.0003;
@@ -566,15 +649,12 @@ class Planet {
 
 
   renderScene() {
-
-    this.generatorSettings = new GeneratorSettings(this.seedString, this.uqmGenerationTable.findPlanetTypeByName(this.uqmGenerationType));
-    this.updatePlanetName();
-    // this.clouds.resolution = this.resolution;
-
+    this.generatorSettings.set(this.seedString, this.uqmGenerationTable.findPlanetTypeByName(this.uqmGenerationType));
     if(this.hasGenerationControls == null || this.hasGenerationControls == false) {
       this.generatorSettings.addControls(this);
       this.hasGenerationControls = true;
     }
+    this.updatePlanetName();
 
     this.updateNormalScaleForRes(this.resolution);
     this.renderNebulaeGradient(this.generatorSettings);
@@ -582,22 +662,22 @@ class Planet {
     this.stars.resolution = this.resolution;
     this.nebula.resolution = this.resolution;
     this.atmosphere.randomizeColor(this.generatorSettings);
-    // this.clouds.randomizeColor();
+    this.clouds.resolution = this.resolution;
     this.clouds.color = this.atmosphere.color;
 
     window.renderQueue.start();
 
     this.renderHeightMap(this.generatorSettings);
     this.renderMoistureMap(this.generatorSettings);
-    this.renderNormalMap(this.generatorSettings);
-    this.renderRoughnessMap(this.generatorSettings);
     this.renderTemperatureMap(this.generatorSettings);
     this.renderBiomeTexture(this.generatorSettings);
     this.renderTextureMap(this.generatorSettings);
+    this.renderNormalMap(this.generatorSettings);
+    this.renderRoughnessMap(this.generatorSettings);
     
-    // this.clouds.render({
-    //   waterLevel: this.waterLevel
-    // });
+    this.clouds.render({
+      waterLevel: this.generatorSettings.waterLevel
+    }, this.generatorSettings);
 
     this.stars.render({
       nebulaeMap: this.nebulaeGradient.texture
@@ -608,10 +688,6 @@ class Planet {
     }, this.generatorSettings);
 
     this.sun.render(this.generatorSettings);
-
-    this.clouds.render({
-      waterLevel: this.waterLevel
-    });
 
     window.renderQueue.addCallback(() => {
       this.updateMaterial();
@@ -677,7 +753,8 @@ class Planet {
       res2: genSetting.heightMap.res2,
       resMix: genSetting.heightMap.resMix,
       mixScale: genSetting.heightMap.mixScale,
-      doesRidged: genSetting.heightMap.doesRidged
+      doesRidged: genSetting.heightMap.doesRidged,
+      isJewel: genSetting.isJewel
       // doesRidged: 1
     });
   }
@@ -690,27 +767,9 @@ class Planet {
       res2: genSetting.moistureMap.res2,
       resMix: genSetting.moistureMap.resMix,
       mixScale: genSetting.moistureMap.mixScale,
-      doesRidged: genSetting.moistureMap.doesRidged
+      doesRidged: genSetting.moistureMap.doesRidged,
+      isJewel: false
       // doesRidged: 0
-    });
-  }
-
-  renderNormalMap(genSetting) {
-    this.normalMap.render({
-      resolution: this.resolution,
-      waterLevel: genSetting.waterLevel,
-      heightMaps: this.heightMaps,
-      textureMaps: this.textureMaps
-    });
-  }
-
-  renderRoughnessMap(genSetting) {
-    this.roughnessMap.render({
-      resolution: this.resolution,
-      heightMaps: this.heightMaps,
-      waterLevel: genSetting.waterLevel,
-      landRoughness: 0.75,
-      waterRoughness: 0.9
     });
   }
 
@@ -733,6 +792,25 @@ class Planet {
       biomeMap: this.biome.texture,
       temperatureMaps: this.temperatureMaps,
       iceCutoff: genSetting.iceCutoff
+    });
+  }
+
+  renderNormalMap(genSetting) {
+    this.normalMap.render({
+      resolution: this.resolution,
+      waterLevel: genSetting.waterLevel,
+      heightMaps: this.heightMaps,
+      textureMaps: this.textureMaps
+    });
+  }
+
+  renderRoughnessMap(genSetting) {
+    this.roughnessMap.render({
+      resolution: this.resolution,
+      heightMaps: this.heightMaps,
+      waterLevel: genSetting.waterLevel,
+      landRoughness: 0.75,
+      waterRoughness: 0.9
     });
   }
 
@@ -771,6 +849,8 @@ class Planet {
   }
 
   updateNormalScaleForRes(value) {
+    if (value == 64) this.normalScale = 0.0625;
+    if (value == 128) this.normalScale = 0.125;
     if (value == 256) this.normalScale = 0.25;
     if (value == 512) this.normalScale = 0.5;
     if (value == 1024) this.normalScale = 1.0;
@@ -837,8 +917,6 @@ class Planet {
     if (!results[2]) return '';
     return decodeURIComponent(results[2].replace(/\+/g, " "));
   }
-  }
-
 }
 
 const RGBToHSL = (r, g, b) => {

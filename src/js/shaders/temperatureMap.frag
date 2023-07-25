@@ -36,6 +36,6 @@ void main() {
     vec3 scoord = getSphericalCoord(index, x*resolution, y*resolution, resolution);
 	//this could be better
     float poles =   pow((distance(scoord, pole1Coord))/1.414, pole1Factor)*
-                    pow((distance(scoord, pole2Coord))/1.414, pole2Factor)*iciness;
-    gl_FragColor = vec4(vec3(poles-heightEffect), 1.0);
+                    pow((distance(scoord, pole2Coord))/1.414, pole2Factor);
+    gl_FragColor = vec4(vec3(poles-heightEffect-iciness), 1.0);
 }
