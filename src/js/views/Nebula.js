@@ -55,9 +55,9 @@ export default class Nebula {
     this.view.add(this.sphere);
   }
 
-  render(props) {
+  render(props, genSetting) {
 
-    this.seed = this.randRange(0, 1000);
+    this.seed = genSetting.randRange(0, 1000);
 
     let min = 1.0;
     let max = 3.0;
@@ -65,10 +65,10 @@ export default class Nebula {
     this.skyMap.render({
       seed: this.seed,
       resolution: this.resolution,
-      res1: this.randRange(min, max),
-      res2: this.randRange(min, max),
-      resMix: this.randRange(min, max),
-      mixScale: this.randRange(min, max),
+      res1: genSetting.randRange(min, max),
+      res2: genSetting.randRange(min, max),
+      resMix: genSetting.randRange(min, max),
+      mixScale: genSetting.randRange(min, max),
       color1: this.color1,
       color2: this.color2,
       color3: this.color3,
@@ -84,13 +84,6 @@ export default class Nebula {
       material.map = this.skyMaps[i];
       material.opacity = this.nebula;
     }
-  }
-
-
-  randRange(low, high) {
-    let range = high - low;
-    let n = window.rng() * range;
-    return low + n;
   }
 
   computeGeometry(geometry) {

@@ -1,26 +1,23 @@
 import * as THREE from 'three'
-import textureVert from 'shaders/texture.vert'
-import textureFrag from 'shaders/textureMap.frag'
-import normalMapFrag from 'shaders/normalMap.frag'
-import normalMapVert from 'shaders/normalMap.vert'
-import roughnessMapFrag from 'shaders/roughnessMap.frag'
 import Biome from 'views/Biome'
 import Atmosphere from 'views/Atmosphere.js'
 import NoiseMap from 'views/NoiseMap.js'
 import TextureMap from 'views/TextureMap.js'
 import NormalMap from 'views/NormalMap.js'
 import RoughnessMap from 'views/RoughnessMap.js'
+import TemperatureMap from 'views/TemperatureMap.js'
 import Clouds from 'views/Clouds.js'
 import Stars from 'views/Stars.js'
 import Nebula from 'views/Nebula.js'
 import Sun from 'views/Sun.js'
 import Glow from 'views/Glow.js'
 import NebulaeGradient from 'views/NebulaeGradient.js'
-import seedrandom from 'seedrandom'
+import randomString from 'crypto-random-string'
 import AtmosphereRing from 'views/AtmosphereRing.js'
 import randomLorem from 'random-lorem'
 import UqmPlanetTable from '../UqmPlanetTable.js'
-
+import UqmGenerationTable from '../UqmGenerationTable.js'
+import GeneratorSettings from '../GeneratorSettings.js'
 
 class Planet {
 
@@ -29,7 +26,6 @@ class Planet {
     this.NON_UQM_PLANET = "NONE";
 
     this.seedString = "Scarlett";
-    this.initSeed();
 
     this.view = new THREE.Object3D();
 
@@ -39,7 +35,6 @@ class Planet {
     this.normalScale = 1.0;
     this.resolution = 1024;
     this.size = 1000;
-    this.waterLevel = 0.0;
 
     this.uqmPlanetTable = new UqmPlanetTable();
     this.uqmPlanetTypes = this.uqmPlanetTable.getAllTypeNames();
@@ -50,13 +45,19 @@ class Planet {
     this.uqmPlanetSeedChoices = [];
     this.uqmPlanetSeedChoice = "NONE";
 
-    // this.waterLevel = 0.5;
+    this.uqmGenerationTable = new UqmGenerationTable();
+    this.uqmGenerationType = "unknown";
+    this.uqmGenerationTypes = this.uqmGenerationTable.getAllTypeNames();
+
+    this.generatorSettings = new GeneratorSettings();
+    this.genSettingsChanged = false;  //ensures only one rerender can happen per frame
 
     this.heightMaps = [];
     this.moistureMaps = [];
     this.textureMaps = [];
     this.normalMaps = [];
     this.roughnessMaps = [];
+    this.temperatureMaps = [];
 
     let matFolder = gui.addFolder('Material');
 
@@ -72,7 +73,7 @@ class Planet {
     // debug options
     this.displayMap = "textureMap";
     let debugFolder = gui.addFolder('Debug');
-    this.displayMapControl = debugFolder.add(this, "displayMap", ["textureMap", "heightMap", "moistureMap", "normalMap", "roughnessMap"]);
+    this.displayMapControl = debugFolder.add(this, "displayMap", ["textureMap", "heightMap", "moistureMap", "normalMap", "roughnessMap", "temperatureMap"]);
     this.displayMapControl.onChange(value => { this.updateMaterial(); });
 
     this.showBiomeMap = false;
@@ -138,8 +139,11 @@ class Planet {
     this.seedStringControl.onFinishChange(value => { this.loadSeedFromTextfield(); });
     window.gui.add(this, "randomize");
 
-    this.uqmPlanetTypeControl = window.gui.add(this, "uqmPlanetType", this.uqmPlanetTypeChoices, );
-    this.uqmPlanetTypeControl.onFinishChange(value => { this.pickPlanetType(); });
+    //this.uqmPlanetTypeControl = window.gui.add(this, "uqmPlanetType", this.uqmPlanetTypeChoices, );
+    //this.uqmPlanetTypeControl.onFinishChange(value => { this.pickPlanetType(); });
+
+    this.uqmGenerationTypeControl = window.gui.add(this, "uqmGenerationType", this.uqmGenerationTypes, );
+    this.uqmGenerationTypeControl.onFinishChange(value => { this.regenerate(); });
 
     document.addEventListener('keydown', (event) => {
       if (event.target.nodeName != 'BODY') {
@@ -160,6 +164,7 @@ class Planet {
   }
 
   update() {
+    this.genSettingsChanged = false;
     if (this.rotate) {
       this.ground.rotation.y += 0.0005;
       this.stars.view.rotation.y += 0.0003;
@@ -240,10 +245,6 @@ class Planet {
     }
   }
 
-  initSeed() {
-    window.rng = seedrandom(this.seedString);
-  }
-
   loadSeedFromURL() {
     this.seedString = this.getParameterByName("seed");
     if (this.seedString) {
@@ -275,7 +276,7 @@ class Planet {
       if (n > 0.8) wordCount = 1;
       else if (n > 0.4) wordCount = 2;
       else wordCount = 3;
-
+  
       this.seedString = "";
       for (let i=0; i<wordCount; i++) {
         this.seedString += this.capitalizeFirstLetter(randomLorem({ min: 2, max: 8 }));
@@ -303,7 +304,7 @@ class Planet {
   randomizeUqm() {
     this.randomize(1);
     this.uqmPlanetSeedChoice = this.seedString;
-
+    
     if (this.uqmPlanetSeedChoiceControl != null) {
       this.uqmPlanetSeedChoiceControl.updateDisplay();
     }
@@ -311,7 +312,7 @@ class Planet {
 
   pickPlanetType() {
     let typeString = this.uqmPlanetType;
-    let type = this.uqmPlanetTable.findPlanetTypeByName(this.uqmPlanetType);
+    let type = UqmGenerationTable.findPlanetTypeByName(this.uqmPlanetType);
 
     if (type != null) {
       this.uqmPlanetSeedChoices = type.seeds;
@@ -331,7 +332,7 @@ class Planet {
       window.gui.remove(this.randomizeUqmButton);
       this.randomizeUqmButton = null;
     }
-
+    
     if (typeString != this.NON_UQM_PLANET) {
       this.uqmPlanetSeedChoiceControl = window.gui.add(this, "uqmPlanetSeedChoice", this.uqmPlanetSeedChoices );
       this.uqmPlanetSeedChoiceControl.onFinishChange(value => { this.pickPlanetSeed(); });
@@ -388,6 +389,9 @@ class Planet {
     this.moistureMap = new NoiseMap();
     this.moistureMaps = this.moistureMap.maps;
 
+    this.temperatureMap = new TemperatureMap();
+    this.temperatureMaps = this.temperatureMap.maps;
+
     this.textureMap = new TextureMap();
     this.textureMaps = this.textureMap.maps;
 
@@ -420,92 +424,45 @@ class Planet {
 
 
   renderScene() {
-
-    this.initSeed();
+    this.generatorSettings.set(this.seedString, this.uqmGenerationTable.findPlanetTypeByName(this.uqmGenerationType));
+    if(this.hasGenerationControls == null || this.hasGenerationControls == false) {
+      this.generatorSettings.addControls(this);
+      this.hasGenerationControls = true;
+    }
     this.updatePlanetName();
 
-    this.seed = this.randRange(0, 1) * 1000.0;
-    this.waterLevel = this.isJewelPlanet(this.uqmPlanetType) ? 0.0 : this.randRange(0.1, 0.5);
-    this.clouds.resolution = this.resolution;
-
     this.updateNormalScaleForRes(this.resolution);
-    this.renderBiomeTexture();
-    this.renderNebulaeGradient();
+    this.renderNebulaeGradient(this.generatorSettings);
 
     this.stars.resolution = this.resolution;
     this.nebula.resolution = this.resolution;
-
-    if (!this.isJewelPlanet(this.uqmPlanetType)) {
-      this.atmosphere.randomizeColor();
-    }
-
-    // this.clouds.randomizeColor();
+    this.atmosphere.randomizeColor(this.generatorSettings);
+    this.clouds.resolution = this.resolution;
     this.clouds.color = this.atmosphere.color;
 
     window.renderQueue.start();
 
-    let resMin = 0.01;
-    let resMax = 5.0;
-
-    this.heightMap.render({
-      seed: this.seed,
-      resolution: this.resolution,
-      res1: this.randRange(resMin, resMax),
-      res2: this.randRange(resMin, resMax),
-      resMix: this.randRange(resMin, resMax),
-      mixScale: this.randRange(0.5, 1.0),
-      doesRidged: Math.floor(this.randRange(0, 4)),
-      isJewel: this.isJewelPlanet(this.uqmPlanetType)
-    });
-
-    let resMod = this.randRange(3, 10);
-    resMax *= resMod;
-    resMin *= resMod;
-
-    this.moistureMap.render({
-      seed: this.seed + 392.253,
-      resolution: this.resolution,
-      res1: this.randRange(resMin, resMax),
-      res2: this.randRange(resMin, resMax),
-      resMix: this.randRange(resMin, resMax),
-      mixScale: this.randRange(0.5, 1.0),
-      doesRidged: Math.floor(this.randRange(0, 4)),
-      isJewel: false
-    });
-
-    this.textureMap.render({
-      resolution: this.resolution,
-      heightMaps: this.heightMaps,
-      moistureMaps: this.moistureMaps,
-      biomeMap: this.biome.texture
-    });
-
-    this.normalMap.render({
-      resolution: this.resolution,
-      waterLevel: this.waterLevel,
-      heightMaps: this.heightMaps,
-      textureMaps: this.textureMaps
-    });
-
-    this.roughnessMap.render({
-      resolution: this.resolution,
-      heightMaps: this.heightMaps,
-      waterLevel: this.waterLevel
-    });
+    this.renderHeightMap(this.generatorSettings);
+    this.renderMoistureMap(this.generatorSettings);
+    this.renderTemperatureMap(this.generatorSettings);
+    this.renderBiomeTexture(this.generatorSettings);
+    this.renderTextureMap(this.generatorSettings);
+    this.renderNormalMap(this.generatorSettings);
+    this.renderRoughnessMap(this.generatorSettings);
+    
+    this.clouds.render({
+      waterLevel: this.generatorSettings.waterLevel
+    }, this.generatorSettings);
 
     this.stars.render({
       nebulaeMap: this.nebulaeGradient.texture
-    });
+    }, this.generatorSettings);
 
     this.nebula.render({
       nebulaeMap: this.nebulaeGradient.texture
-    });
+    }, this.generatorSettings);
 
-    this.sun.render();
-
-    this.clouds.render({
-      waterLevel: this.waterLevel
-    });
+    this.sun.render(this.generatorSettings);
 
     window.renderQueue.addCallback(() => {
       this.updateMaterial();
@@ -545,20 +502,91 @@ class Planet {
         material.normalMap = null;
         material.roughnessMap = null;
       }
+      else if (this.displayMap == "temperatureMap") {
+        material.map = this.temperatureMaps[i];
+        material.normalMap = null;
+        material.roughnessMap = null;
+      }
 
       material.needsUpdate = true;
     }
   }
 
-  renderBiomeTexture() {
-    this.biome.generateTexture({
-      waterLevel: this.waterLevel,
-      uqmPlanetType: this.uqmPlanetType
+  renderBiomeTexture(genSetting) {
+    this.biome.generateTexture(genSetting);
+  }
+
+  renderNebulaeGradient(genSetting) {
+    this.nebulaeGradient.generateTexture(genSetting);
+  }
+
+  renderHeightMap(genSetting) {
+    this.heightMap.render({
+      seed: genSetting.seed,
+      resolution: this.resolution,
+      res1: genSetting.heightMap.res1,
+      res2: genSetting.heightMap.res2,
+      resMix: genSetting.heightMap.resMix,
+      mixScale: genSetting.heightMap.mixScale,
+      doesRidged: genSetting.heightMap.doesRidged,
+      isJewel: genSetting.isJewel
+      // doesRidged: 1
     });
   }
 
-  renderNebulaeGradient() {
-    this.nebulaeGradient.generateTexture();
+  renderMoistureMap(genSetting) {
+    this.moistureMap.render({
+      seed: genSetting.seed + 392.253,
+      resolution: this.resolution,
+      res1: genSetting.moistureMap.res1,
+      res2: genSetting.moistureMap.res2,
+      resMix: genSetting.moistureMap.resMix,
+      mixScale: genSetting.moistureMap.mixScale,
+      doesRidged: genSetting.moistureMap.doesRidged,
+      isJewel: false
+      // doesRidged: 0
+    });
+  }
+
+  renderTemperatureMap(genSetting) {
+    this.temperatureMap.render({
+      resolution: this.resolution,
+      heightMaps: this.heightMaps,
+      pole1Factor: genSetting.pole1Factor,
+      pole2Factor: genSetting.pole2Factor,
+      heightFactor: genSetting.heightFactor,
+      iciness: genSetting.iciness
+    })
+  }
+
+  renderTextureMap(genSetting) {
+    this.textureMap.render({
+      resolution: this.resolution,
+      heightMaps: this.heightMaps,
+      moistureMaps: this.moistureMaps,
+      biomeMap: this.biome.texture,
+      temperatureMaps: this.temperatureMaps,
+      iceCutoff: genSetting.iceCutoff
+    });
+  }
+
+  renderNormalMap(genSetting) {
+    this.normalMap.render({
+      resolution: this.resolution,
+      waterLevel: genSetting.waterLevel,
+      heightMaps: this.heightMaps,
+      textureMaps: this.textureMaps
+    });
+  }
+
+  renderRoughnessMap(genSetting) {
+    this.roughnessMap.render({
+      resolution: this.resolution,
+      heightMaps: this.heightMaps,
+      waterLevel: genSetting.waterLevel,
+      landRoughness: 0.75,
+      waterRoughness: 0.9
+    });
   }
 
   createAtmosphere() {
@@ -596,17 +624,13 @@ class Planet {
   }
 
   updateNormalScaleForRes(value) {
+    if (value == 64) this.normalScale = 0.0625;
+    if (value == 128) this.normalScale = 0.125;
     if (value == 256) this.normalScale = 0.25;
     if (value == 512) this.normalScale = 0.5;
     if (value == 1024) this.normalScale = 1.0;
     if (value == 2048) this.normalScale = 1.5;
     if (value == 4096) this.normalScale = 3.0;
-  }
-
-  randRange(low, high) {
-    let range = high - low;
-    let n = window.rng() * range;
-    return low + n;
   }
 
   computeGeometry(geometry) {
@@ -668,11 +692,26 @@ class Planet {
     if (!results[2]) return '';
     return decodeURIComponent(results[2].replace(/\+/g, " "));
   }
-
-  isJewelPlanet(uqmPlanetType) {
-    return uqmPlanetType === 'Emerald' || uqmPlanetType === 'Ruby' || uqmPlanetType === 'Sapphire';
-  }
-
 }
+
+const RGBToHSL = (r, g, b) => {
+  r /= 255;
+  g /= 255;
+  b /= 255;
+  const l = Math.max(r, g, b);
+  const s = l - Math.min(r, g, b);
+  const h = s
+    ? l === r
+      ? (g - b) / s
+      : l === g
+      ? 2 + (b - r) / s
+      : 4 + (r - g) / s
+    : 0;
+  return [
+    60 * h < 0 ? 60 * h + 360 : 60 * h,
+    100 * (s ? (l <= 0.5 ? s / (2 * l - s) : s / (2 - (2 * l - s))) : 0),
+    (100 * (2 * l - s)) / 2,
+  ];
+};
 
 export default Planet;

@@ -17,9 +17,11 @@ class RoughnessMap extends Map {
     for (let i = 0; i < 6; i++) {
       this.mats[i] = new THREE.ShaderMaterial({
         uniforms: {
-          resolution: {type: "f", value: 0},
-          waterLevel: {type: "f", value: 0},
-          heightMap: {type: "t", value: new THREE.Texture()}
+          resolution: { type: "f", value: 0 },
+          heightMap: {type: "t", value: new THREE.Texture()},
+          waterLevel: { type: "f", value: 0 },
+          landRoughness: { type: "f", value: 0.75 },
+          waterRoughness: { type: "f", value: 0.9 }
         },
         vertexShader: vertShader,
         fragmentShader: fragShader,
@@ -36,8 +38,10 @@ class RoughnessMap extends Map {
 
     for (let i = 0; i < 6; i++) {
       this.mats[i].uniforms.resolution.value = props.resolution;
-      this.mats[i].uniforms.waterLevel.value = props.waterLevel;
       this.mats[i].uniforms.heightMap.value = props.heightMaps[i];
+      this.mats[i].uniforms.waterLevel.value = props.waterLevel;
+      this.mats[i].uniforms.landRoughness.value = props.landRoughness;
+      this.mats[i].uniforms.waterRoughness.value = props.waterRoughness;
       this.mats[i].needsUpdate = true;
     }
 
