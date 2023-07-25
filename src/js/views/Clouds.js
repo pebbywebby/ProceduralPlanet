@@ -108,8 +108,6 @@ class Clouds {
   computeGeometry(geometry) {
   	// geometry.makeGroups();
   	geometry.computeVertexNormals()
-  	///geometry.computeFaceNormals();
-  	///geometry.computeMorphNormals();
   	geometry.computeBoundingSphere();
   	geometry.computeBoundingBox();
   	// geometry.computeLineDistances();
