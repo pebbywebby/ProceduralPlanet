@@ -269,7 +269,6 @@ class Planet {
   }
 
   randomize(use_uqm_table = false) {
-    // this.seedString = randomString(10);
 
     if (!use_uqm_table) {
       let n = Math.random();

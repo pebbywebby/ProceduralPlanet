@@ -30,7 +30,6 @@
     "webpack-merge": "^4.1.0"
   },
   "dependencies": {
-    "crypto-random-string": "^1.0.0",
     "dat.gui": "^0.7.9",
     "file-loader": "^1.1.6",
     "glsl-checker": "^1.0.1",
@@ -47,7 +46,6 @@
     "three": "^0.85.2",
     "three.meshline": "^1.0.3",
     "tinycolor2": "^1.4.1",
-    "ttf-loader": "^1.0.2",
     "webvr-polyfill": "^0.9.29",
     "webvr-ui": "^0.9.4"
   },
