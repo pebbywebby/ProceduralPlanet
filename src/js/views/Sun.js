@@ -1,4 +1,5 @@
 import * as THREE from 'three'
+import { Lensflare, LensflareElement } from 'three/examples/jsm/objects/Lensflare'
 import SunTexture from 'views/SunTexture.js'
 
 export default class Sun {
@@ -28,8 +29,8 @@ export default class Sun {
     var sunColor2 = new THREE.Color().setHSL(this.randRange(0,1), s, 0.5);
     let sunSize = this.randRange(1000, 2000);
     sunSize = 1500;
-    this.lensFlare = new THREE.LensFlare( this.sunTexture.texture, sunSize, 0.0, THREE.AdditiveBlending, sunColor );
-    this.lensFlare.add(this.sunTexture.texture, sunSize*2, 0.1, THREE.AdditiveBlending, sunColor, 0.2);
+    this.lensFlare = new Lensflare();
+    this.lensFlare.addElement(new LensflareElement(this.sunTexture.texture, sunSize*2, 0.1, sunColor));
 
 
     let numFlares = 15;
@@ -39,7 +40,7 @@ export default class Sun {
       let offset = this.randRange(0.05, 0.4);
       let color = this.randomColor();
       let alpha = this.randRange(0.1, 0.3);
-      this.lensFlare.add(this.textureBlur, size, offset, THREE.AdditiveBlending, color, alpha);
+      this.lensFlare.addElement(new LensflareElement(this.textureBlur, size, offset, color));
     }
 
     numFlares = 5;
@@ -49,7 +50,7 @@ export default class Sun {
       let offset = this.randRange(-0.05, -0.2);
       let color = this.randomColor();
       let alpha = this.randRange(0.1, 0.3);
-      this.lensFlare.add(this.textureBlur, size, offset, THREE.AdditiveBlending, color, alpha);
+      this.lensFlare.addElement(new LensflareElement(this.textureBlur, size, offset, color));
     }
 
 
@@ -60,7 +61,7 @@ export default class Sun {
       let offset = this.randRange(-0.1, 0.2);
       let color = this.randomColor();
       let alpha = this.randRange(0, 0.1);
-      this.lensFlare.add(this.textureRing, size, offset, THREE.AdditiveBlending, color, alpha);
+      this.lensFlare.addElement(new LensflareElement(this.textureRing, size, offset, color));
     }
 
     this.lensFlare.position.set(-20000, 20000, 20000);

@@ -324,7 +324,7 @@ class Biome {
     // let sOffset = this.randRange(-this.satRange, this.satRange);
     // let lOffset = this.randRange(-this.lightRange, this.lightRange);
 
-    let c = newColor.getHSL();
+    let c = newColor.getHSL({});
     c.h += hOffset;
     c.s = this.randRange(0.0, 0.6);
     // console.log("sat = " + c.s);
@@ -385,7 +385,7 @@ class Biome {
     let sOffset = this.randRange(-this.satRange, this.satRange);
     let lOffset = this.randRange(-this.lightRange, this.lightRange);
 
-    let c = newColor.getHSL();
+    let c = newColor.getHSL({});
     c.h += hOffset;
     c.s += sOffset;
     c.l += lOffset;
@@ -426,7 +426,7 @@ class Biome {
   //   }
   //
   //   newColor.offsetHSL(hOffset, 0, 0);
-  //   let c = newColor.getHSL();
+  //   let c = newColor.getHSL({});
   //   newColor.setHSL(c.h, this.randRange(0.0, 0.8), this.randRange(0.0, 0.6));
   //
   //   return {r: Math.round(newColor.r*255),
