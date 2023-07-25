@@ -66,7 +66,7 @@ module.exports = {
                 test: /\.ttf$/,
                 type: 'asset/resource',
                 generator: {
-                    filename: './assets/fonts/[name].[ext]',
+                    filename: './assets/fonts/[name][ext]',
                 },
             },
             { test: /\.(glsl|frag|vert)$/, loader: 'raw-loader', exclude: /node_modules/ },
