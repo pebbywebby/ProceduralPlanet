@@ -32,7 +32,7 @@ class Atmosphere {
       this.color = new THREE.Color(0x0000dc);
     }
 
-    this.size = 1002;
+    this.size = 1007;
     this.atmosphere = 0.3;
     // window.gui.add(this, "atmosphere", 0.0, 1.0).step(0.01);
 
@@ -63,7 +63,7 @@ class Atmosphere {
 
     // this.mat = new THREE.MeshStandardMaterial({color: 0xFFFFFF});
 
-    this.geo = new THREE.IcosahedronBufferGeometry(1, 6);
+    this.geo = new THREE.IcosahedronGeometry(1, 6);
     this.sphere = new THREE.Mesh(this.geo, this.mat);
     this.sphere.scale.set(this.size, this.size, this.size);
     this.view.add(this.sphere);

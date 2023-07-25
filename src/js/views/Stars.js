@@ -40,9 +40,12 @@ export default class Stars {
 
     let geo = new THREE.BoxGeometry(1, 1, 1, 32, 32, 32);
     let radius = this.size;
-    for (var i in geo.vertices) {
-  		var vertex = geo.vertices[i];
+    const position = geo.getAttribute("position");
+    const vertex = new THREE.Vector3();
+    for (let i = 0; i < position.count; ++i) {
+  		vertex.fromBufferAttribute(position, i);
   		vertex.normalize().multiplyScalar(radius);
+      position.setXYZ(i, vertex.x, vertex.y, vertex.z);
   	}
     this.computeGeometry(geo);
     this.sphere = new THREE.Mesh(geo, this.materials);
@@ -79,8 +82,6 @@ export default class Stars {
   computeGeometry(geometry) {
   	// geometry.makeGroups();
   	geometry.computeVertexNormals()
-  	geometry.computeFaceNormals();
-  	geometry.computeMorphNormals();
   	geometry.computeBoundingSphere();
   	geometry.computeBoundingBox();
   	// geometry.computeLineDistances();

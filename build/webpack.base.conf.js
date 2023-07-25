@@ -24,7 +24,6 @@ module.exports = {
     resolve: {
         modules: [path.resolve(__dirname, '../src'),'node_modules'],
         alias: {
-            'webvr-ui': "webvr-ui/build/webvr-ui",
             'fonts': path.resolve(__dirname, '../src/fonts'),
             'views': path.resolve(__dirname, '../src/js/views'),
             'models': path.resolve(__dirname, '../src/models'),
@@ -35,13 +34,15 @@ module.exports = {
         }
     },
     plugins: [
-        new CopyWebpackPlugin([
-            {from: 'src/fonts/', to: 'assets/fonts/'},
-            {from: 'src/models/', to: 'assets/models/'},
-            {from: 'src/sounds/', to: 'assets/sounds/'},
-            {from: 'src/textures/', to: 'assets/textures/'},
-            {from: 'src/img/', to: 'assets/img/'},
-        ]),
+        new CopyWebpackPlugin({
+            patterns: [
+                {from: 'src/fonts/', to: 'assets/fonts/'},
+                {from: 'src/models/', to: 'assets/models/'},
+                {from: 'src/sounds/', to: 'assets/sounds/'},
+                {from: 'src/textures/', to: 'assets/textures/'},
+                {from: 'src/img/', to: 'assets/img/'},
+            ],
+        }),
         new webpack.ProvidePlugin({
             'THREE': 'three'
         }),
@@ -49,19 +50,12 @@ module.exports = {
     module: {
         rules: [
             {
-                test: require.resolve("three/examples/js/vr/WebVR"),
-                use: 'exports-loader?WEBVR'
-            },
-            {
                 test: /\.js$/,
                 include: projectRoot,
                 exclude: /node_modules/,
                 loader: 'babel-loader',
-                query: {
+                options: {
                     compact: true,
-                    presets: [
-                        ['es2015', {modules: false}]
-                    ]
                 }
             },
             {
@@ -70,20 +64,15 @@ module.exports = {
             },
             {
                 test: /\.ttf$/,
-                use: [
-                    {
-                        loader: "file-loader",
-                        options: {
-                            name: "[name].[ext]",
-                            outputPath: "assets/fonts/",
-                        },
-                    },
-                ]
+                type: 'asset/resource',
+                generator: {
+                    filename: './assets/fonts/[name][ext]',
+                },
             },
             { test: /\.(glsl|frag|vert)$/, loader: 'raw-loader', exclude: /node_modules/ },
             { test: /\.(glsl|frag|vert)$/, loader: 'glslify-loader', exclude: /node_modules/ },
             { test: /node_modules/, loader: 'ify-loader' },
-            { test: /\.json$/, loader: 'json-loader' },
+            { test: /\.json$/, loader: 'json-loader', type: 'javascript/auto' },
         ]
     }
 }

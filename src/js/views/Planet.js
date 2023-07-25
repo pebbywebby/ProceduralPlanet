@@ -12,7 +12,6 @@ import Nebula from 'views/Nebula.js'
 import Sun from 'views/Sun.js'
 import Glow from 'views/Glow.js'
 import NebulaeGradient from 'views/NebulaeGradient.js'
-import randomString from 'crypto-random-string'
 import AtmosphereRing from 'views/AtmosphereRing.js'
 import randomLorem from 'random-lorem'
 import UqmPlanetTable from '../UqmPlanetTable.js'
@@ -410,9 +409,12 @@ class Planet {
 
     let geo = new THREE.BoxGeometry(1, 1, 1, 64, 64, 64);
     let radius = this.size;
-    for (var i in geo.vertices) {
-  		var vertex = geo.vertices[i];
+    const position = geo.getAttribute("position");
+    const vertex = new THREE.Vector3();
+    for (let i = 0; i < position.count; ++i) {
+  		vertex.fromBufferAttribute(position, i);
   		vertex.normalize().multiplyScalar(radius);
+      position.setXYZ(i, vertex.x, vertex.y, vertex.z);
   	}
     this.computeGeometry(geo);
     this.ground = new THREE.Mesh(geo, this.materials);
@@ -633,8 +635,6 @@ class Planet {
   computeGeometry(geometry) {
   	// geometry.makeGroups();
   	geometry.computeVertexNormals()
-  	geometry.computeFaceNormals();
-  	geometry.computeMorphNormals();
   	geometry.computeBoundingSphere();
   	geometry.computeBoundingBox();
   	// geometry.computeLineDistances();

@@ -1,6 +1,5 @@
 import 'three'
-import 'three/examples/js/controls/OrbitControls'
-import 'three/examples/js/controls/VRControls'
+import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
 
 import dat from 'dat.gui'
 import Stats from 'stats-js'
@@ -16,6 +15,12 @@ class AbstractApplication {
         this._scene = new THREE.Scene();
 
         this._renderer = new THREE.WebGLRenderer({antialias: false, alpha: true});
+
+        // For now, we need to override the default output color space to preserve the correct lighting following a
+        // change in Three.js 0.152. We should fix this by going through the color assignments and material textures.
+        // @see https://discourse.threejs.org/t/updates-to-color-management-in-three-js-r152/50791
+        this._renderer.outputColorSpace = THREE.LinearSRGBColorSpace;
+        
         this._renderer.setPixelRatio( window.devicePixelRatio );
         this._renderer.sortObjects = false;
         // this._renderer.setPixelRatio( 2.0 );
@@ -32,7 +37,7 @@ class AbstractApplication {
         this._scene.add(this.directionalLight);
         window.light = this.directionalLight;
 
-        this._controls = new THREE.OrbitControls( this._camera, this._renderer.domElement );
+        this._controls = new OrbitControls( this._camera, this._renderer.domElement );
         //this._controls.addEventListener( 'change', render ); // add this only if there is no animation loop (requestAnimationFrame)
         this._controls.enableDamping = true;
         this._controls.dampingFactor = 0.1;

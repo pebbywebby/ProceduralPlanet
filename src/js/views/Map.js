@@ -45,7 +45,9 @@ class Map {
         this.textureCameras[i].updateProjectionMatrix();
         this.geos[i] = new THREE.PlaneGeometry(resolution, resolution);
         this.planes[i].geometry = this.geos[i];
-    		window.renderer.render(this.textureScenes[i], this.textureCameras[i], this.textures[i], true);
+        window.renderer.setRenderTarget(this.textures[i]);
+    		window.renderer.render(this.textureScenes[i], this.textureCameras[i]);
+        window.renderer.setRenderTarget(null);
         this.geos[i].dispose();
 
       });
