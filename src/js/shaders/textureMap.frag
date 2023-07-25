@@ -5,10 +5,14 @@ varying vec2 vUv;
 uniform sampler2D biomeMap;
 uniform sampler2D heightMap;
 uniform sampler2D moistureMap;
+uniform sampler2D temperatureMap;
+uniform float iceCutoff;   //this is bugged for some reason I can't understand
 
 void main() {
 	float x = vUv.x;
 	float y = vUv.y;
+
+	float temp = texture2D(temperatureMap, vec2(x,y)).r;
 
 	float n1 = texture2D(heightMap, vec2(x, y)).r;
 	float n2 = texture2D(moistureMap, vec2(x, y)).r;
@@ -29,5 +33,8 @@ void main() {
 
 	// color = vec4(1.0);
 
-	gl_FragColor = color;
+	if(temp < 0.1) //temporary fix
+		gl_FragColor = vec4(1.0);
+	else
+		gl_FragColor = color;
 }

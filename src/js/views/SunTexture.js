@@ -20,21 +20,21 @@ export default class SunTexture {
   }
 
 
-  generateTexture() {
+  generateTexture(genSetting) {
 
-    let h = this.randRange(0.0, 1.0);
-    let s = this.randRange(0.0, 0.5);
-    let l = this.randRange(0.2, 0.5);
+    let h = genSetting.randRange(0.0, 1.0);
+    let s = genSetting.randRange(0.0, 0.5);
+    let l = genSetting.randRange(0.2, 0.5);
     this.baseColor = new THREE.Color().setHSL(h, s, l);
 
-    this.baseHue = this.randRange(0.0, 1.0);
+    this.baseHue = genSetting.randRange(0.0, 1.0);
 
 
     this.clear();
-    this.drawBaseGradient();
-    this.drawStarGradient();
-    this.drawBeams();
-    this.drawHalo();
+    this.drawBaseGradient(genSetting);
+    this.drawStarGradient(genSetting);
+    this.drawBeams(genSetting);
+    this.drawHalo(genSetting);
     // this.drawBaseGradient2();
 
 
@@ -46,7 +46,7 @@ export default class SunTexture {
     this.ctx.fillRect(0, 0, this.width, this.height);
   }
 
-  drawBaseGradient() {
+  drawBaseGradient(genSetting) {
     let x = this.width/2;
     let y = this.width/2;
     let r1 = 0;
@@ -66,7 +66,7 @@ export default class SunTexture {
     this.ctx.fillRect(0, 0, this.width, this.height);
   }
 
-  drawStarGradient() {
+  drawStarGradient(genSetting) {
     let x = this.width/2;
     let y = this.width/2;
     let r1 = 0;
@@ -78,7 +78,7 @@ export default class SunTexture {
     // console.log("h = " + h);
 
     let size = 0.03;
-    size = this.randRange(0.03, 0.07);
+    size = genSetting.randRange(0.03, 0.07);
 
     let gradient = this.ctx.createRadialGradient(x,y,r1,x,y,r2);
     this.addColorToGradient(0, {h:h, s:s, l:1.0, a:1.0}, gradient);
@@ -90,7 +90,7 @@ export default class SunTexture {
     this.ctx.fillRect(0, 0, this.width, this.height);
   }
 
-  drawBeams() {
+  drawBeams(genSetting) {
 
     let x = this.width/2;
     let y = this.width/2;
@@ -102,16 +102,16 @@ export default class SunTexture {
     let l = 0.9;
     // console.log("h = " + h);
 
-    let dist = this.randRange(0.5, 1.0);
+    let dist = genSetting.randRange(0.5, 1.0);
     dist = 1;
     let gradient = this.ctx.createRadialGradient(x,y,r1,x,y,r2);
     this.addColorToGradient(0, {h:h, s:s, l:l, a:0.1}, gradient);
     this.addColorToGradient(0.15, {h:h, s:s, l:l, a:0.025}, gradient);
     this.addColorToGradient(dist, {h:h, s:s, l:l , a:0.0}, gradient);
 
-    let numBeams = Math.floor(this.randRange(1, 5));
+    let numBeams = Math.floor(genSetting.randRange(1, 5));
     numBeams *= 2;
-    let size = this.randRange(0.05, 0.2);
+    let size = genSetting.randRange(0.05, 0.2);
     let angleStep = Math.PI*2 / numBeams;
     for (let i=0; i<numBeams; i++) {
       let a = angleStep*i;
@@ -127,16 +127,16 @@ export default class SunTexture {
       }
     }
 
-    // dist = this.randRange(0.9, 1.0);
-    // numBeams = Math.floor(this.randRange(2, 8));
+    // dist = genSetting.randRange(0.9, 1.0);
+    // numBeams = Math.floor(genSetting.randRange(2, 8));
     // numBeams *= 2;
-    // l = this.randRange(0.5, 1.0);
-    size = this.randRange(0.01, 0.1);
+    // l = genSetting.randRange(0.5, 1.0);
+    size = genSetting.randRange(0.01, 0.1);
     gradient = this.ctx.createRadialGradient(x,y,r1,x,y,r2);
     this.addColorToGradient(0, {h:h, s:s, l:l, a:0.1}, gradient);
     this.addColorToGradient(0.15, {h:h, s:s, l:l, a:0.025}, gradient);
     this.addColorToGradient(dist, {h:h, s:s, l:l , a:0.0}, gradient);
-    let offset = this.randRange(0.1, Math.PI);
+    let offset = genSetting.randRange(0.1, Math.PI);
     for (let i=0; i<numBeams; i++) {
       let a = angleStep*i+offset;
 
@@ -153,23 +153,23 @@ export default class SunTexture {
 
   }
 
-  drawHalo() {
+  drawHalo(genSetting) {
     let x = this.width/2;
     let y = this.width/2;
     let r1 = 0;
     let r2 = this.width/2;
 
-    let h = this.baseHue+this.randRange(-0.2, 0.2);
+    let h = this.baseHue+genSetting.randRange(-0.2, 0.2);
 
-    // h = this.randRange(0,1);
+    // h = genSetting.randRange(0,1);
     let s = 1.0;
     let l = 0.7;
     // console.log("h = " + h);
 
     let pos = 0.23;
-    pos = this.randRange(0.1, 0.2);
+    pos = genSetting.randRange(0.1, 0.2);
     let width = 0.05;
-    // width = this.randRange(0.01, 0.03);
+    // width = genSetting.randRange(0.01, 0.03);
 
     let gradient = this.ctx.createRadialGradient(x,y,r1,x,y,r2);
     this.addColorToGradient(pos-width, {h:h, s:s, l:l, a:0.0}, gradient);
@@ -202,12 +202,4 @@ export default class SunTexture {
       this.canvas.style.display = "none";
     }
   }
-
-  randRange(low, high) {
-    let range = high - low;
-    let n = window.rng() * range;
-    return low + n;
-  }
-
-
 }

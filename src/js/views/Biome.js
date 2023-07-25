@@ -20,52 +20,12 @@ class Biome {
 
   }
 
-  generateTexture(props) {
-
-    this.waterLevel = props.waterLevel;
-    this.uqmPlanetType = props.uqmPlanetType;
-
-    let h = this.randRange(0.0, 1.0);
-    let s = this.randRange(0.0, 0.7);
-    let l = this.randRange(0.0, 0.6);
-
-    if (this.uqmPlanetType === 'Emerald') {
-      h = 0.38;
-      s = 0.37;
-      l = 0.28;
-    } else if (this.uqmPlanetType === 'Ruby') {
-      h = 0.97;
-      s = 0.87;
-      l = 0.42;
-    } else if (this.uqmPlanetType === 'Sapphire') {
-      h = 0.69;
-      s = 0.91;
-      l = 0.41;
-    }
-
-    this.baseColor = new THREE.Color().setHSL(h, s, l);
-    this.colorAngle = this.randRange(0.2, 0.4)
-    this.satRange = this.randRange(0.3, 0.5);
-    this.lightRange = this.randRange(0.3, 0.5);
-    this.circleSize = this.randRange(30, 250);
-    // this.circleSize = 100;
-
-
-    this.drawBase();
-
-    if (!this.isJewelPlanet(this.uqmPlanetType)) {
-      // circles
-      let numCircles = Math.round(this.randRange(50, 100));
-      numCircles = 100;
-      for (let i=0; i<numCircles; i++) {
-        this.randomGradientCircle();
-      }
-
-      this.drawDetail();
-      this.drawInland();
-      this.drawBeach();
-      this.drawWater();
-    }
+  generateTexture(genSetting) {
+    this.drawBase(genSetting);
+    this.drawDetail(genSetting);
+    this.drawInland(genSetting);
+    this.drawBeach(genSetting);
+    this.drawWater(genSetting);
 
     this.texture = new THREE.CanvasTexture(this.canvas);
   }
@@ -78,53 +38,45 @@ class Biome {
     }
   }
 
-  drawBase() {
-    this.fillBaseColor();
+  fillBaseColor(color) {
+    this.ctx.fillStyle = this.toCanvasColor(color);
+    this.ctx.fillRect(0, 0, this.width, this.height);
+  }
+  drawBase(genSetting) {
+    this.fillBaseColor(genSetting.baseColor);
 
-    for (let i=0; i<5; i++) {
-      let x = 0;
-      let y = 0;
-      let width = this.width;
-      let height = this.height;
-      if (this.isJewelPlanet(this.uqmPlanetType)) {
-        this.randomJewelStrip(this.uqmPlanetType, x, y, width, height);
-      } else {
-        this.randomGradientRect(x, y, width, height);
-      }
+    for (let i = 0; i < 5; i++) {
+      let args = genSetting.baseGradientArr[i];
+      this.randomGradientRect(genSetting.baseColor2, 0, 0, this.width, this.height, args.x1, args.y1, args.x2, args.y2);
     }
   }
 
-  drawDetail() {
-    // land detail
-    let landDetail = Math.round(this.randRange(0, 5));
-    // landDetail = 20;
-    // console.log("landDetail = " + landDetail);
-    for (let i=0; i<landDetail; i++) {
-      let x1 = this.randRange(0, this.width);
-      let y1 = this.randRange(0, this.height);
-      let x2 = this.randRange(0, this.width);
-      let y2 = this.randRange(0, this.height);
-      let width = x2-x1;
-      let height = y2-y1;
-
-      // this.randomGradientStrip(0, 0, this.width, this.height);
-      this.randomGradientStrip(x1, y1, width, height);
+  drawDetail(genSetting) {
+    for (let i=0; i < genSetting.circleNum; i++) {
+      let args = genSetting.circleArr[i];
+      this.randomGradientCircle(args.color, args.size, args.x, args.y);
+    }
+    for (let i = 0; i < genSetting.landDetail; i++) {
+      let args = genSetting.landDetailArr[i];
+      this.randomGradientStrip(args.color, args.x, args.y, args.width, args.height,
+        args.gradx1, args.grady1, args.gradx2, args.grady2, args.offset1, args.offset2);
     }
   }
 
-  drawRivers() {
+  //unused
+  drawRivers(genSetting) {
     // rivers
-    let c = this.randomColor();
-    this.ctx.strokeStyle = "rgba("+c.r+", "+c.g+", "+c.b+", 0.5)";
+    let c = genSetting.riverColor;
+    this.ctx.strokeStyle = "rgba("+c.r*255+", "+c.g*255+", "+c.b*255+", 0.5)";
 
-    let x = this.randRange(0, this.width);
-    let y = this.randRange(0, this.height);
+    let x = genSetting.randRange(0, this.width);
+    let y = genSetting.randRange(0, this.height);
     let prevX = x;
     let prevY = y;
 
     for (let i=0; i<5; i++) {
-      x = this.randRange(0, this.width);
-      y = this.randRange(0, this.height);
+      x = genSetting.randRange(0, this.width);
+      y = genSetting.randRange(0, this.height);
 
       this.ctx.moveTo(prevX, prevY);
       this.ctx.lineTo(x, y);
@@ -135,53 +87,115 @@ class Biome {
     }
   }
 
-  randomCircle() {
-    let x = this.randRange(0, this.width);
-    let y = this.randRange(0, this.height);
-    let rad = this.randRange(0, 10);
-    // rad = 3;
+  drawWater(genSetting) {
+    let x1 = 0;
+    let y1 = this.height - (this.height * genSetting.waterLevel);
+    let x2 = 0;
+    let y2 = this.height;
 
-    let c = this.randomColor();
-    this.ctx.fillStyle = "rgba("+c.r+", "+c.g+", "+c.b+", 0.5)";
+    let gradient = this.ctx.createLinearGradient(x1, y1, x2, y2);
+
+    let c = genSetting.waterColor;
+
+    let falloff = 1.3*255;
+    let falloff2 = 1.0*255;
+    let falloff3 = 0.7*255;
+    let opacity = 0.9;
+    // gradient.addColorStop(0.0, "rgba("+cr+", "+cg+", "+cb+", "+0+")");
+    gradient.addColorStop(0.0, "rgba("+Math.round(c.r*falloff)+", "+Math.round(c.g*falloff)+", "+Math.round(c.b*falloff)+", "+opacity+")");
+    gradient.addColorStop(0.2, "rgba("+Math.round(c.r*falloff2)+", "+Math.round(c.g*falloff2)+", "+Math.round(c.b*falloff2)+", "+opacity+")");
+    gradient.addColorStop(0.8, "rgba("+Math.round(c.r*falloff3)+", "+Math.round(c.g*falloff3)+", "+Math.round(c.b*falloff3)+", "+opacity+")");
+
+    this.ctx.fillStyle = gradient;
+    this.ctx.fillRect(x1, y1, this.width, this.height);
+  }
+
+  drawBeach(genSetting) {
+    this.beachSize = 7;
+
+    let x1 = 0;
+    let y1 = this.height - (this.height * genSetting.waterLevel) - this.beachSize;
+    let x2 = 0;
+    let y2 = this.height - (this.height * genSetting.waterLevel);
+
+    let gradient = this.ctx.createLinearGradient(x1, y1, x2, y2);
+
+    let c = genSetting.beachColor;
+    let falloff = 1.0*255;
+    let falloff2 = 1.0*255;
+    // gradient.addColorStop(0.0, "rgba("+cr+", "+cg+", "+cb+", "+0+")");
+    gradient.addColorStop(0.0, "rgba("+Math.round(c.r*falloff)+", "+Math.round(c.g*falloff)+", "+Math.round(c.b*falloff)+", "+0.0+")");
+    gradient.addColorStop(1.0, "rgba("+Math.round(c.r*falloff2)+", "+Math.round(c.g*falloff2)+", "+Math.round(c.b*falloff2)+", "+0.3+")");
+
+    this.ctx.fillStyle = gradient;
+    this.ctx.fillRect(x1, y1, this.width, this.beachSize);
+  }
+
+  drawInland(genSetting) {
+    let x1 = 0;
+    let y1 = this.height - (this.height * genSetting.waterLevel) - genSetting.inlandSize;
+    let x2 = 0;
+    let y2 = this.height - (this.height * genSetting.waterLevel);
+
+    let gradient = this.ctx.createLinearGradient(x1, y1, x2, y2);
+
+    let c = genSetting.inlandColor;
+    let falloff = 1.0*255;
+    let falloff2 = 1.0*255;
+    // gradient.addColorStop(0.0, "rgba("+cr+", "+cg+", "+cb+", "+0+")");
+    gradient.addColorStop(0.0, "rgba("+Math.round(c.r*falloff)+", "+Math.round(c.g*falloff)+", "+Math.round(c.b*falloff)+", "+0.0+")");
+    gradient.addColorStop(1.0, "rgba("+Math.round(c.r*falloff2)+", "+Math.round(c.g*falloff2)+", "+Math.round(c.b*falloff2)+", "+0.5+")");
+
+    this.ctx.fillStyle = gradient;
+    this.ctx.fillRect(x1, y1, this.width, genSetting.inlandSize);
+  }
+
+  randomGradientStrip(c, x, y, width, height, gradx1, grady1, gradx2, grady2, offset1, offset2) {
+    let gradient = this.ctx.createLinearGradient(gradx1, grady1, gradx2, grady2);
+    gradient.addColorStop(offset1, "rgba("+c.r*255+", "+c.g*255+", "+c.b*255+", 0.0)");
+    gradient.addColorStop(0.5, "rgba("+c.r*255+", "+c.g*255+", "+c.b*255+", 0.8)");
+    gradient.addColorStop(offset2, "rgba("+c.r*255+", "+c.g*255+", "+c.b*255+", 0.0)");
+
+    this.ctx.fillStyle = gradient;
+    this.ctx.fillRect(x, y, width, height);
+  }
+
+  randomGradientRect(c, x, y, width, height, x1, y1, x2, y2) {
+    let gradient = this.ctx.createLinearGradient(x1, y1, x2, y2);
+
+    gradient.addColorStop(0, "rgba("+c.r*255+", "+c.g*255+", "+c.b*255+", 0.0)");
+    gradient.addColorStop(1, "rgba("+c.r*255+", "+c.g*255+", "+c.b*255+", 1.0)");
+
+    this.ctx.fillStyle = gradient;
+    this.ctx.fillRect(x, y, width, height);
+  }
+
+  randomGradientCircle(color, size, x, y) {
+    let x1 = x;
+    let y1 = y;
+    let x2 = x1;
+    let y2 = y1;
+    let r1 = 0;
+    let r2 = size;
+
+    let gradient = this.ctx.createRadialGradient(x1,y1,r1,x2,y2,r2);
+
+    let c = color;
+    gradient.addColorStop(0, "rgba("+c.r*255+", "+c.g*255+", "+c.b*255+", 1.0)");
+    gradient.addColorStop(1, "rgba("+c.r*255+", "+c.g*255+", "+c.b*255+", 0.0)");
+
+    this.ctx.fillStyle = gradient;
+    this.ctx.fillRect(0, 0, this.width, this.height);
+  }
+
+  //these two are unused
+  randomCircle(x, y, rad, c) {
+    this.ctx.fillStyle = "rgba("+c.r*255+", "+c.g*255+", "+c.b*255+", 0.5)";
     // this.ctx.lineWidth = 1;
 
     this.ctx.beginPath();
     this.ctx.arc(x, y, rad, 0, 2*Math.PI);
     this.ctx.fill();
-  }
-
-  randomGradientStrip(x, y, width, height) {
-    let x1 = this.randRange(0, this.width);
-    let y1 = this.randRange(0, this.height);
-    let x2 = this.randRange(0, this.width);
-    let y2 = this.randRange(0, this.height);
-
-    let gradient = this.ctx.createLinearGradient(x1, y1, x2, y2);
-
-    let c = this.randomColor();
-    gradient.addColorStop(this.randRange(0, 0.5), "rgba("+c.r+", "+c.g+", "+c.b+", 0.0)");
-    gradient.addColorStop(0.5, "rgba("+c.r+", "+c.g+", "+c.b+", 0.8)");
-    gradient.addColorStop(this.randRange(0.5, 1.0), "rgba("+c.r+", "+c.g+", "+c.b+", 0.0)");
-
-    this.ctx.fillStyle = gradient;
-    this.ctx.fillRect(x, y, width, height);
-  }
-
-  randomJewelStrip(uqmPlanetType, x, y, width, height) {
-    let x1 = this.randRange(0, this.width);
-    let y1 = this.randRange(0, this.height);
-    let x2 = this.randRange(0, this.width);
-    let y2 = this.randRange(0, this.height);
-
-    let gradient = this.ctx.createLinearGradient(x1, y1, x2, y2);
-
-    let c = this.randomJewelColor(uqmPlanetType);
-    gradient.addColorStop(this.randRange(0, 0.5), "rgba("+c.r+", "+c.g+", "+c.b+", 0.0)");
-    gradient.addColorStop(0.5, "rgba("+c.r+", "+c.g+", "+c.b+", 0.8)");
-    gradient.addColorStop(this.randRange(0.5, 1.0), "rgba("+c.r+", "+c.g+", "+c.b+", 0.0)");
-
-    this.ctx.fillStyle = gradient;
-    this.ctx.fillRect(x, y, width, height);
   }
 
   blackWhiteGradient() {
@@ -200,261 +214,14 @@ class Biome {
     this.ctx.fillRect(0, 0, this.width, this.height);
   }
 
-  fillBaseColor() {
-    this.ctx.fillStyle = this.toCanvasColor(this.baseColor);
-    this.ctx.fillRect(0, 0, this.width, this.height);
-  }
-
-  randomGradientRect(x, y, width, height) {
-    let x1 = this.randRange(0, this.width);
-    let y1 = this.randRange(0, this.height);
-    let x2 = this.randRange(0, this.width);
-    let y2 = this.randRange(0, this.height);
-
-    let gradient = this.ctx.createLinearGradient(x1, y1, x2, y2);
-
-    let c = this.randomColor();
-    gradient.addColorStop(0, "rgba("+c.r+", "+c.g+", "+c.b+", 0.0)");
-    gradient.addColorStop(1, "rgba("+c.r+", "+c.g+", "+c.b+", 1.0)");
-
-    this.ctx.fillStyle = gradient;
-    this.ctx.fillRect(x, y, width, height);
-  }
-
-  drawWater() {
-    let x1 = 0;
-    let y1 = this.height - (this.height * this.waterLevel);
-    let x2 = 0;
-    let y2 = this.height;
-
-    let gradient = this.ctx.createLinearGradient(x1, y1, x2, y2);
-
-    // let c = this.randomColor();
-    let c = this.randomWaterColor();
-
-    let falloff = 1.3;
-    let falloff2 = 1.0;
-    let falloff3 = 0.7;
-    let opacity = 0.9;
-    // gradient.addColorStop(0.0, "rgba("+cr+", "+cg+", "+cb+", "+0+")");
-    gradient.addColorStop(0.0, "rgba("+Math.round(c.r*falloff)+", "+Math.round(c.g*falloff)+", "+Math.round(c.b*falloff)+", "+opacity+")");
-    gradient.addColorStop(0.2, "rgba("+Math.round(c.r*falloff2)+", "+Math.round(c.g*falloff2)+", "+Math.round(c.b*falloff2)+", "+opacity+")");
-    gradient.addColorStop(0.8, "rgba("+Math.round(c.r*falloff3)+", "+Math.round(c.g*falloff3)+", "+Math.round(c.b*falloff3)+", "+opacity+")");
-
-    this.ctx.fillStyle = gradient;
-    this.ctx.fillRect(x1, y1, this.width, this.height);
-  }
-
-  drawBeach() {
-    this.beachSize = 7;
-
-    let x1 = 0;
-    let y1 = this.height - (this.height * this.waterLevel) - this.beachSize;
-    let x2 = 0;
-    let y2 = this.height - (this.height * this.waterLevel);
-
-    let gradient = this.ctx.createLinearGradient(x1, y1, x2, y2);
-
-    let c = this.randomColor();
-    let falloff = 1.0;
-    let falloff2 = 1.0;
-    // gradient.addColorStop(0.0, "rgba("+cr+", "+cg+", "+cb+", "+0+")");
-    gradient.addColorStop(0.0, "rgba("+Math.round(c.r*falloff)+", "+Math.round(c.g*falloff)+", "+Math.round(c.b*falloff)+", "+0.0+")");
-    gradient.addColorStop(1.0, "rgba("+Math.round(c.r*falloff2)+", "+Math.round(c.g*falloff2)+", "+Math.round(c.b*falloff2)+", "+0.3+")");
-
-    this.ctx.fillStyle = gradient;
-    this.ctx.fillRect(x1, y1, this.width, this.beachSize);
-  }
-
-  drawInland() {
-    this.inlandSize = 100;
-
-    let x1 = 0;
-    let y1 = this.height - (this.height * this.waterLevel) - this.inlandSize;
-    let x2 = 0;
-    let y2 = this.height - (this.height * this.waterLevel);
-
-    let gradient = this.ctx.createLinearGradient(x1, y1, x2, y2);
-
-    let c = this.randomColor();
-    let falloff = 1.0;
-    let falloff2 = 1.0;
-    // gradient.addColorStop(0.0, "rgba("+cr+", "+cg+", "+cb+", "+0+")");
-    gradient.addColorStop(0.0, "rgba("+Math.round(c.r*falloff)+", "+Math.round(c.g*falloff)+", "+Math.round(c.b*falloff)+", "+0.0+")");
-    gradient.addColorStop(1.0, "rgba("+Math.round(c.r*falloff2)+", "+Math.round(c.g*falloff2)+", "+Math.round(c.b*falloff2)+", "+0.5+")");
-
-    this.ctx.fillStyle = gradient;
-    this.ctx.fillRect(x1, y1, this.width, this.inlandSize);
-  }
-
-  randomGradientCircle() {
-    let x1 = this.randRange(0, this.width);
-    let y1 = this.randRange(0, this.height) - this.height * this.waterLevel;
-    let size = this.randRange(10, this.circleSize);
-    let x2 = x1;
-    let y2 = y1;
-    let r1 = 0;
-    let r2 = size;
-
-    let gradient = this.ctx.createRadialGradient(x1,y1,r1,x2,y2,r2);
-
-    let c = this.randomColor();
-
-    gradient.addColorStop(0, "rgba("+c.r+", "+c.g+", "+c.b+", 1.0)");
-    gradient.addColorStop(1, "rgba("+c.r+", "+c.g+", "+c.b+", 0.0)");
-
-    this.ctx.fillStyle = gradient;
-    this.ctx.fillRect(0, 0, this.width, this.height);
-  }
-
-  randomWaterColor() {
-    let newColor = this.baseColor.clone();
-
-    let hOffset = 0.0;
-    let range = 0.1;
-    let n = this.randRange(0,1);
-    if (n < 0.33) {
-      hOffset = 0.0 + this.randRange(-range, range);
-    } else if (n < 0.66) {
-      hOffset = this.colorAngle + this.randRange(-range, range);
-    } else {
-      hOffset = -this.colorAngle + this.randRange(-range, range);
-    }
-
-    // let sOffset = this.randRange(-this.satRange, this.satRange);
-    // let lOffset = this.randRange(-this.lightRange, this.lightRange);
-
-    let c = newColor.getHSL();
-    c.h += hOffset;
-    c.s = this.randRange(0.0, 0.6);
-    // console.log("sat = " + c.s);
-    c.l = this.randRange(0.1, 0.4);
-
-    newColor.setHSL(c.h, c.s, c.l);
-
-    // newColor.offsetHSL(hOffset, sOffset, lOffset);
-
-    return {r: Math.round(newColor.r*255),
-            g: Math.round(newColor.g*255),
-            b: Math.round(newColor.b*255)};
-  }
-
-  randomJewelColor(uqmPlanetType) {
-    let newColor = this.baseColor.clone();
-    let hue = this.randRange(0.0, 1.0);
-    let saturation =  this.randRange(0.0, 1.0);
-
-    if (uqmPlanetType === 'Emerald') {
-      hue = 0.38;
-      saturation = this.randRange(0.2, 0.4);
-    } else if (uqmPlanetType === 'Ruby') {
-      hue = 0.97;
-      saturation = this.randRange(0.7, 0.9);
-    } else if (uqmPlanetType === 'Sapphire') {
-      hue = 0.69;
-      saturation = this.randRange(0.7, 0.9);
-    }
-
-    // Mostly dark colors, but some lighter ones for effect
-    let lightness = window.rng() < 0.9 ? this.randRange(0.05, 0.15) : this.randRange(0.45, 0.55);
-
-    newColor.setHSL(hue, saturation, lightness);
-
-    return {
-      r: Math.round(newColor.r * 255),
-      g: Math.round(newColor.g * 255),
-      b: Math.round(newColor.b * 255)
-    };
-  }
-
-  randomColor() {
-
-    let newColor = this.baseColor.clone();
-
-    let hOffset = 0.0;
-    let range = 0.1;
-    let n = this.randRange(0,1);
-    if (n < 0.33) {
-      hOffset = 0.0 + this.randRange(-range, range);
-    } else if (n < 0.66) {
-      hOffset = this.colorAngle + this.randRange(-range, range);
-    } else {
-      hOffset = -this.colorAngle + this.randRange(-range, range);
-    }
-
-    let sOffset = this.randRange(-this.satRange, this.satRange);
-    let lOffset = this.randRange(-this.lightRange, this.lightRange);
-
-    let c = newColor.getHSL();
-    c.h += hOffset;
-    c.s += sOffset;
-    c.l += lOffset;
-    if (c.l < 0) {
-      c.l = Math.abs(c.l) * 0.3;
-    }
-    // if (c.l > 0.7) {
-    //   let diff = c.l - 0.7;
-    //   c.l = 0.7 - diff;
-    // }
-
-    // c.s = this.randRange(0.0, 0.7);
-    // c.l = this.randRange(0.0, 1.0);
-
-    newColor.setHSL(c.h, c.s, c.l);
-
-    // newColor.offsetHSL(hOffset, sOffset, lOffset);
-
-    return {r: Math.round(newColor.r*255),
-            g: Math.round(newColor.g*255),
-            b: Math.round(newColor.b*255)};
-
-  }
-
-  // randomColor() {
-  //
-  //   let newColor = this.baseColor.clone();
-  //
-  //   let hOffset = 0.0;
-  //   let range = 0.1;
-  //   let n = this.randRange(0,1);
-  //   if (n < 0.33) {
-  //     hOffset = 0.0 + this.randRange(-range, range);
-  //   } else if (n < 0.66) {
-  //     hOffset = this.colorAngle + this.randRange(-range, range);
-  //   } else {
-  //     hOffset = -this.colorAngle + this.randRange(-range, range);
-  //   }
-  //
-  //   newColor.offsetHSL(hOffset, 0, 0);
-  //   let c = newColor.getHSL();
-  //   newColor.setHSL(c.h, this.randRange(0.0, 0.8), this.randRange(0.0, 0.6));
-  //
-  //   return {r: Math.round(newColor.r*255),
-  //           g: Math.round(newColor.g*255),
-  //           b: Math.round(newColor.b*255)};
-  //
-  // }
-
   toCanvasColor(c) {
     return "rgba("+Math.round(c.r*255)+", "+Math.round(c.g*255)+", "+Math.round(c.b*255)+", 1.0)";
-  }
-
-  randRange(low, high) {
-    let range = high - low;
-    let n = window.rng() * range;
-    return low + n;
   }
 
   mix(v1, v2, amount) {
     let dist = v2 - v1;
     return v1 + (dist * amount);
   }
-
-  isJewelPlanet(uqmPlanetType) {
-    return uqmPlanetType === 'Emerald' || uqmPlanetType === 'Ruby' || uqmPlanetType === 'Sapphire';
-  }
-
-
 }
 
 export default Biome;

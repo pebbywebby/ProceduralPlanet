@@ -18,7 +18,7 @@ class Clouds {
     this.size = 1001;
 
 
-    this.color = new THREE.Color(0xffffff);
+    this.color = new THREE.Color(0xffffffff);
 
     this.cloudColor = [this.color.r*255, this.color.g*255, this.color.b*255];
 
@@ -68,20 +68,17 @@ class Clouds {
     this.view.add(this.sphere);
   }
 
-  render(props) {
-    this.seed = this.randRange(0, 1000);
-    let cloudSize = this.randRange(0.5, 1.0);
-
+  render(props, genSetting) {
+    //let cloudSize = this.randRange(0.5, 1.0);
     let mixScale = this.map_range(props.waterLevel*props.waterLevel, 0, 0.8, 0.0, 3.0);
 
-
     this.cloudMap.render({
-      seed: this.seed,
+      seed: genSetting.seed,
       resolution: this.resolution,
-      res1: this.randRange(0.1, 1.0),
-      res2: this.randRange(0.1, 1.0),
-      resMix: this.randRange(0.1, 1.0),
-      mixScale: this.randRange(0.1, 1.0)
+      res1: genSetting.cloudMap.res1,
+      res2: genSetting.cloudMap.res2,
+      resMix: genSetting.cloudMap.resMix,
+      mixScale: genSetting.cloudMap.mixScale
     });
 
     this.updateMaterial();
@@ -97,28 +94,12 @@ class Clouds {
       material.roughness = this.roughness;
       material.metalness = this.metalness;
       material.opacity = this.clouds;
-      material.map = this.cloudMaps[i],
+      material.map = this.cloudMaps[i];
       // material.alphaMap = this.cloudMaps[i],
       // material.bumpMap = this.cloudMaps[i],
       // material.bumpScale = 1.0,
-      material.color = this.color
+      material.color = this.color;
     }
-  }
-
-  randomizeColor() {
-
-    this.color.r = this.randRange(0.7, 1.0);
-    this.color.g = this.randRange(0.7, 1.0);
-    this.color.b = this.randRange(0.7, 1.0);
-
-    this.updateMaterial();
-  }
-
-
-  randRange(low, high) {
-    let range = high - low;
-    let n = window.rng() * range;
-    return low + n;
   }
 
   computeGeometry(geometry) {

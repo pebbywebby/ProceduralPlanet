@@ -18,8 +18,10 @@ class TextureMap extends Map {
       this.mats[i] = new THREE.ShaderMaterial({
         uniforms: {
           biomeMap: {type: "t", value: new THREE.Texture()},
-          heightMap: {type: "t", value: new THREE.Texture()},
-          moistureMap: {type: "t", value: new THREE.Texture()}
+          heightMap: { type: "t", value: new THREE.Texture() },
+          moistureMap: { type: "t", value: new THREE.Texture() },
+          temperatureMap: { type: "t", value: new THREE.Texture() },
+          iceCutoff: { type: "f", value: 0.2 }
         },
         vertexShader: vertShader,
         fragmentShader: fragShader,
@@ -39,9 +41,11 @@ class TextureMap extends Map {
 
     for (let i = 0; i < 6; i++) {
 
+      this.mats[i].uniforms.biomeMap.value = props.biomeMap;
       this.mats[i].uniforms.heightMap.value = props.heightMaps[i];
       this.mats[i].uniforms.moistureMap.value = props.moistureMaps[i];
-      this.mats[i].uniforms.biomeMap.value = props.biomeMap;
+      this.mats[i].uniforms.temperatureMap.value = props.temperatureMaps[i];
+      this.mats[i].uniforms.iceCutoff = props.iceCutoff;  //this is somehow not passed to the shader
       this.mats[i].needsUpdate = true;
     }
 

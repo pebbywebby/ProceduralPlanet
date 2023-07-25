@@ -81,17 +81,12 @@ class Atmosphere {
     this.mat.uniforms.color.value = this.color;
   }
 
-  randomize() {
-    this.randomizeColor();
-
-  }
-
-  randomizeColor() {
+  randomizeColor(genSetting) {
     this.color = new THREE.Color();
 
-    this.color.r = this.randRange(0.5, 1.0);
-    this.color.g = this.randRange(0.5, 1.0);
-    this.color.b = this.randRange(0.5, 1.0);
+    this.color.r = genSetting.randRange(0.5, 1.0);
+    this.color.g = genSetting.randRange(0.5, 1.0);
+    this.color.b = genSetting.randRange(0.5, 1.0);
 
     this.mat.uniforms.color.value = this.color;
   }
