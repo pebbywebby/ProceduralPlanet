@@ -17,7 +17,6 @@ import Sun from 'views/Sun.js'
 import Glow from 'views/Glow.js'
 import NebulaeGradient from 'views/NebulaeGradient.js'
 import seedrandom from 'seedrandom'
-import randomString from 'crypto-random-string'
 import AtmosphereRing from 'views/AtmosphereRing.js'
 import randomLorem from 'random-lorem'
 import UqmPlanetTable from '../UqmPlanetTable.js'
@@ -269,7 +268,6 @@ class Planet {
   }
 
   randomize(use_uqm_table = false) {
-    // this.seedString = randomString(10);
 
     if (!use_uqm_table) {
       let n = Math.random();
