@@ -21,9 +21,9 @@ void main() {
 	float roughness = 0.5;
 
 	if (n < waterLevel) {
-		roughness = landRoughness;
-	} else {
 		roughness = waterRoughness;
+	} else {
+		roughness = landRoughness;
 	}
 
 	gl_FragColor = vec4(vec3(roughness), 1.0);
