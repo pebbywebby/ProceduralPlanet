@@ -439,8 +439,6 @@ class Planet {
     this.clouds.resolution = this.resolution;
     this.clouds.color = this.atmosphere.color;
 
-    window.renderQueue.start();
-
     this.renderHeightMap(this.generatorSettings);
     this.renderMoistureMap(this.generatorSettings);
     this.renderTemperatureMap(this.generatorSettings);
