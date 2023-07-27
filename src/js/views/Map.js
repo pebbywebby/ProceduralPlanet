@@ -7,7 +7,7 @@ class Map {
   }
 
   setup() {
-    this.camera = new THREE.OrthographicCamera(-1, 1, 1, -1, -100, 100);    
+    this.camera = new THREE.OrthographicCamera(-1, 1, 1, -1, -100, 100);
     this.camera.position.z = 10;
 
     this.maps = [];
@@ -23,16 +23,9 @@ class Map {
   render(props) {
     let res = props.resolution;
 
-    this.camera.left = -res/2;
-    this.camera.right = res/2;
-    this.camera.top = res/2;
-    this.camera.bottom = -res/2;
-    this.camera.updateProjectionMatrix();
-
-
     window.renderQueue.addAction(() => {
 
-      let geo = new THREE.PlaneGeometry(res, res);
+      let geo = new THREE.PlaneGeometry(2, 2);
       let plane = new THREE.Mesh(geo);
       plane.position.z = -10;
 
