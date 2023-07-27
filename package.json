@@ -48,9 +48,7 @@
     "stats-js": "^1.0.1",
     "three": "^0.154.0",
     "three.meshline": "^1.4.0",
-    "tinycolor2": "^1.6.0",
-    "webvr-polyfill": "^0.10.12",
-    "webvr-ui": "^0.10.0"
+    "tinycolor2": "^1.6.0"
   },
   "browserify": {
     "transform": [
