@@ -226,39 +226,3 @@ a#magic-window {
     color: white;
     margin-top: 1em;
 }
-
-#loadingBarHolder {
-  position: absolute;
-
-  left: 0px;
-  right: 0px;
-  top: 0px;
-  bottom: 0px;
-  margin: auto;
-
-  width: 245px;
-  height: 100px;
-
-  text-align: center;
-  font-size: 18px;
-  font-family: "Helvetica-Light", sans-serif;
-
-  /* border: 1px solid #222222; */
-  padding: 20px;
-  padding-top: 30px;
-  background-color: rgba(0, 0, 0, 0.8);
-  z-index: 2000;
-}
-
-#loadingBarBase {
-  width: 100%;
-  height: 50%;
-  margin-top: 10px;
-  background-color: #333333;
-}
-
-#loadingBar {
-  width: 50%;
-  height: 100%;
-  background-color: #777777;
-}
