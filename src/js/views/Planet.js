@@ -583,8 +583,8 @@ class Planet {
       resolution: this.resolution,
       heightMaps: this.heightMaps,
       waterLevel: genSetting.waterLevel,
-      landRoughness: 0.75,
-      waterRoughness: 0.9
+      landRoughness: 0.9,
+      waterRoughness: 0.75
     });
   }
 

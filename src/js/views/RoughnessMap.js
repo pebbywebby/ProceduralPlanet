@@ -20,8 +20,8 @@ class RoughnessMap extends Map {
           resolution: { type: "f", value: 0 },
           heightMap: {type: "t", value: new THREE.Texture()},
           waterLevel: { type: "f", value: 0 },
-          landRoughness: { type: "f", value: 0.75 },
-          waterRoughness: { type: "f", value: 0.9 }
+          landRoughness: { type: "f", value: 0.9 },
+          waterRoughness: { type: "f", value: 0.75 }
         },
         vertexShader: vertShader,
         fragmentShader: fragShader,
