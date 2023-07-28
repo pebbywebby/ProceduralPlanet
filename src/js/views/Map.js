@@ -15,8 +15,7 @@ class Map {
 
     for (let i = 0; i < 6; i++) {
       this.renderTargets[i] = new THREE.WebGLRenderTarget(1, 1, {minFilter: THREE.LinearFilter, magFilter: THREE.NearestFilter, format: THREE.RGBAFormat});
-  		this.maps[i] = this.renderTargets[i].texture;
-      //this.maps.push(new THREE.Texture());
+      this.maps[i] = this.renderTargets[i].texture;
     }
   }
 
@@ -32,13 +31,11 @@ class Map {
       let scene = new THREE.Scene();
       scene.add(plane);
 
-      //window.renderer.compile(scene, this.textureCamera);
       for (let i = 0; i < 6; i++) {
         this.renderTargets[i].setSize(res, res);
         plane.material = this.mats[i];
         window.renderer.setRenderTarget(this.renderTargets[i]);
-
-    		window.renderer.render(scene, this.camera);
+        window.renderer.render(scene, this.camera);
       }
 
       window.renderer.setRenderTarget(null);
