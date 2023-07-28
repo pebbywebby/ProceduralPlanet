@@ -105,11 +105,6 @@ class NebulaeGradient {
     return "rgba("+Math.round(c.r*255)+", "+Math.round(c.g*255)+", "+Math.round(c.b*255)+", 1.0)";
   }
 
-  mix(v1, v2, amount) {
-    let dist = v2 - v1;
-    return v1 + (dist * amount);
-  }
-
 }
 
 export default NebulaeGradient;

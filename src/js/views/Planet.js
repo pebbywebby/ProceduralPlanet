@@ -12,7 +12,6 @@ import Nebula from 'views/Nebula.js'
 import Sun from 'views/Sun.js'
 import Glow from 'views/Glow.js'
 import NebulaeGradient from 'views/NebulaeGradient.js'
-import AtmosphereRing from 'views/AtmosphereRing.js'
 import randomLorem from 'random-lorem'
 import UqmPlanetTable from '../UqmPlanetTable.js'
 import UqmGenerationTable from '../UqmGenerationTable.js'
@@ -81,18 +80,15 @@ class Planet {
       if (this.biome) {
         this.biome.toggleCanvasDisplay(value);
       }
-     });
+    });
 
-     this.showNebulaMap = false;
-     this.showNebulaMapControl = debugFolder.add(this, "showNebulaMap");
-     this.showNebulaMapControl.onChange(value => {
-       if (this.nebulaeGradient) {
-         this.nebulaeGradient.toggleCanvasDisplay(value);
-       }
-      });
-
-
-
+    this.showNebulaMap = false;
+    this.showNebulaMapControl = debugFolder.add(this, "showNebulaMap");
+    this.showNebulaMapControl.onChange(value => {
+      if (this.nebulaeGradient) {
+        this.nebulaeGradient.toggleCanvasDisplay(value);
+      }
+    });
 
     this.biome = new Biome();
     this.nebulaeGradient = new NebulaeGradient();
@@ -137,9 +133,6 @@ class Planet {
     this.seedStringControl = window.gui.add(this, "seedString").listen();
     this.seedStringControl.onFinishChange(value => { this.loadSeedFromTextfield(); });
     window.gui.add(this, "randomize");
-
-    //this.uqmPlanetTypeControl = window.gui.add(this, "uqmPlanetType", this.uqmPlanetTypeChoices, );
-    //this.uqmPlanetTypeControl.onFinishChange(value => { this.pickPlanetType(); });
 
     this.uqmGenerationTypeControl = window.gui.add(this, "uqmGenerationType", this.uqmGenerationTypes, );
     this.uqmGenerationTypeControl.onFinishChange(value => { this.regenerate(); });
@@ -247,10 +240,8 @@ class Planet {
   loadSeedFromURL() {
     this.seedString = this.getParameterByName("seed");
     if (this.seedString) {
-      console.log("seed string exists");
       this.regenerate();
     } else {
-      console.log("no seed string");
       this.randomize(true);
     }
 
@@ -292,8 +283,6 @@ class Planet {
       this.seedString = seeds[Math.floor(Math.random() * seeds.length)];
     }
 
-    // this.seedString = randomLorem({ min: 2, max: 8 });
-    // this.seedString += " " + randomLorem({ min: 2, max: 8 });
     let url = this.updateQueryString("seed", this.seedString);
     window.history.pushState({seed: this.seedString}, this.seedString, url);
     this.autoGenCountCurrent = 0;
@@ -320,8 +309,6 @@ class Planet {
       this.uqmPlanetSeedChoices = [];
       this.uqmPlanetSeedChoice = "NONE";
     }
-//    console.log(this.uqmPlanetSeedChoices);
-//    console.log(this.uqmPlanetSeedChoice);
 
     if (this.uqmPlanetSeedChoiceControl != null) {
       window.gui.remove(this.uqmPlanetSeedChoiceControl);
@@ -477,7 +464,6 @@ class Planet {
         material.normalMap = this.normalMaps[i];
         material.normalScale = new THREE.Vector2(this.normalScale, this.normalScale);
         material.roughnessMap = this.roughnessMaps[i];
-        // material.metalnessMap = this.roughnessMaps[i];
       }
       else if (this.displayMap == "heightMap") {
         material.map = this.heightMaps[i];
@@ -527,7 +513,6 @@ class Planet {
       mixScale: genSetting.heightMap.mixScale,
       doesRidged: genSetting.heightMap.doesRidged,
       isJewel: genSetting.isJewel
-      // doesRidged: 1
     });
   }
 
@@ -541,7 +526,6 @@ class Planet {
       mixScale: genSetting.moistureMap.mixScale,
       doesRidged: genSetting.moistureMap.doesRidged,
       isJewel: false
-      // doesRidged: 0
     });
   }
 
@@ -590,13 +574,11 @@ class Planet {
     this.atmosphere = new Atmosphere({
       uqmPlanetType: this.uqmPlanetType
     });
-    // this.atmosphere.color = this.glow.color;
     this.view.add(this.atmosphere.view);
   }
 
   createGlow() {
     this.glow = new Glow();
-    // this.glow.color = this.atmosphere.color;
     this.view.add(this.glow.view);
   }
 
@@ -631,20 +613,16 @@ class Planet {
   }
 
   computeGeometry(geometry) {
-  	// geometry.makeGroups();
   	geometry.computeVertexNormals()
   	geometry.computeBoundingSphere();
   	geometry.computeBoundingBox();
-  	// geometry.computeLineDistances();
 
   	geometry.verticesNeedUpdate = true;
   	geometry.elementsNeedUpdate = true;
   	geometry.uvsNeedUpdate = true;
   	geometry.normalsNeedUpdate = true;
-  	// geometry.tangentsNeedUpdate = true;
   	geometry.colorsNeedUpdate = true;
   	geometry.lineDistancesNeedUpdate = true;
-  	// geometry.buffersNeedUpdate = true;
   	geometry.groupsNeedUpdate = true;
   }
 
@@ -688,25 +666,5 @@ class Planet {
     return decodeURIComponent(results[2].replace(/\+/g, " "));
   }
 }
-
-const RGBToHSL = (r, g, b) => {
-  r /= 255;
-  g /= 255;
-  b /= 255;
-  const l = Math.max(r, g, b);
-  const s = l - Math.min(r, g, b);
-  const h = s
-    ? l === r
-      ? (g - b) / s
-      : l === g
-      ? 2 + (b - r) / s
-      : 4 + (r - g) / s
-    : 0;
-  return [
-    60 * h < 0 ? 60 * h + 360 : 60 * h,
-    100 * (s ? (l <= 0.5 ? s / (2 * l - s) : s / (2 - (2 * l - s))) : 0),
-    (100 * (2 * l - s)) / 2,
-  ];
-};
 
 export default Planet;

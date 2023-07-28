@@ -3,7 +3,7 @@ import vertShader from 'shaders/normalMap.vert'
 import fragShader from 'shaders/normalMap.frag'
 import Map from 'views/Map.js'
 
-class NormalMap extends Map{
+class NormalMap extends Map {
 
   constructor() {
     super();
@@ -32,9 +32,9 @@ class NormalMap extends Map{
 
   render(props) {
     // props.resolution
+    // props.waterLevel
     // props.heightMaps[]
     // props.textureMaps[]
-    // props.waterLevel
 
     for (let i = 0; i < 6; i++) {
       this.mats[i].uniforms.resolution.value = props.resolution;

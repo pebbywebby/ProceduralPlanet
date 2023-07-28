@@ -41,6 +41,7 @@ export default class NebulaMap extends Map {
     // props.res2
     // props.resMix
     // props.mixScale
+    // props.nebulaeMap
 
     for (let i = 0; i < 6; i++) {
       this.mats[i].uniforms.seed.value = props.seed;

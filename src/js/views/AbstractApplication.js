@@ -8,6 +8,8 @@ class AbstractApplication {
 
     constructor(){
 
+        this.statsPanelEnabled = false;
+
         this._camera = new THREE.PerspectiveCamera( 50, window.innerWidth / window.innerHeight, 1, 100000 );
         this._camera.position.z = 2700;
         window.camera = this._camera;
@@ -23,7 +25,6 @@ class AbstractApplication {
         
         this._renderer.setPixelRatio( window.devicePixelRatio );
         this._renderer.sortObjects = false;
-        // this._renderer.setPixelRatio( 2.0 );
         this._renderer.setSize( window.innerWidth, window.innerHeight );
         window.renderer = this._renderer;
         document.body.appendChild( this._renderer.domElement );
@@ -38,14 +39,12 @@ class AbstractApplication {
         window.light = this.directionalLight;
 
         this._controls = new OrbitControls( this._camera, this._renderer.domElement );
-        //this._controls.addEventListener( 'change', render ); // add this only if there is no animation loop (requestAnimationFrame)
         this._controls.enableDamping = true;
         this._controls.dampingFactor = 0.1;
         this._controls.rotateSpeed = 0.1;
         this._controls.autoRotate = false;
         this._controls.autoRotateSpeed = 0.01;
         this._controls.zoomSpeed = 0.1;
-        // this._controls.enableZoom = false;
 
         // gui
         window.gui = new dat.GUI({ autoPlace: false });
@@ -60,7 +59,6 @@ class AbstractApplication {
         });
 
         lightFolder.add(this.directionalLight, "intensity", 0.0, 3.0);
-        // this.dirLightControl.onChange(value => {});
 
         this.ambientColor = {r:255, g:255, b:255};
         this.ambientControl = lightFolder.addColor(this, "ambientColor").onChange(value => {
@@ -78,13 +76,15 @@ class AbstractApplication {
         this.fovControl = cameraFolder.add(this._camera, "fov", 20, 120);
         this.fovControl.onChange(value => { this._camera.updateProjectionMatrix() });
 
-        // stats
-        this.stats = new Stats();
-        this.stats.setMode(0);
-        // document.body.appendChild(this.stats.domElement);
-        this.stats.domElement.style.position = 'absolute';
-        this.stats.domElement.style.left = '10px';
-        this.stats.domElement.style.top = '0px';
+        // Stats
+        if (this.statsPanelEnabled) {
+          this.stats = new Stats();
+          this.stats.setMode(0);
+          document.body.appendChild(this.stats.domElement);
+          this.stats.domElement.style.position = 'absolute';
+          this.stats.domElement.style.left = '10px';
+          this.stats.domElement.style.top = '0px';
+        }
 
         window.addEventListener( 'resize', this.onWindowResize.bind(this), false );
         window.addEventListener( 'keydown', (e) => { this.onKeyDown(e) }, false );
@@ -140,12 +140,18 @@ class AbstractApplication {
     }
 
     animate(timestamp) {
-        this.stats.begin();
+        if (this.statsPanelEnabled) {
+          this.stats.begin();
+        }
+
         requestAnimationFrame( this.animate.bind(this) );
 
         this._controls.update();
         this._renderer.render( this._scene, this._camera );
-        this.stats.end();
+
+        if (this.statsPanelEnabled) {
+          this.stats.end();
+        }
     }
 
 

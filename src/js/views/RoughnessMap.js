@@ -35,6 +35,8 @@ class RoughnessMap extends Map {
     // props.resolution
     // props.heightMaps[]
     // props.waterLevel
+    // props.landRoughness
+    // props.waterRoughness
 
     for (let i = 0; i < 6; i++) {
       this.mats[i].uniforms.resolution.value = props.resolution;

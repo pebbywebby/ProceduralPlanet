@@ -40,10 +40,6 @@ class Clouds {
 
   }
 
-  update() {
-    //
-  }
-
   setup() {
 
     this.cloudMap = new CloudMap();
@@ -72,9 +68,6 @@ class Clouds {
   }
 
   render(props, genSetting) {
-    //let cloudSize = this.randRange(0.5, 1.0);
-    let mixScale = this.map_range(props.waterLevel*props.waterLevel, 0, 0.8, 0.0, 3.0);
-
     this.cloudMap.render({
       seed: genSetting.seed,
       resolution: this.resolution,
@@ -87,10 +80,6 @@ class Clouds {
     this.updateMaterial();
   }
 
-  map_range(value, low1, high1, low2, high2) {
-    return low2 + (high2 - low2) * (value - low1) / (high1 - low1);
-  }
-
   updateMaterial() {
     for (let i=0; i<6; i++) {
       let material = this.materials[i];
@@ -98,28 +87,21 @@ class Clouds {
       material.metalness = this.metalness;
       material.opacity = this.clouds;
       material.map = this.cloudMaps[i];
-      // material.alphaMap = this.cloudMaps[i],
-      // material.bumpMap = this.cloudMaps[i],
-      // material.bumpScale = 1.0,
       material.color = this.color;
     }
   }
 
   computeGeometry(geometry) {
-  	// geometry.makeGroups();
   	geometry.computeVertexNormals()
   	geometry.computeBoundingSphere();
   	geometry.computeBoundingBox();
-  	// geometry.computeLineDistances();
 
   	geometry.verticesNeedUpdate = true;
   	geometry.elementsNeedUpdate = true;
   	geometry.uvsNeedUpdate = true;
   	geometry.normalsNeedUpdate = true;
-  	// geometry.tangentsNeedUpdate = true;
   	geometry.colorsNeedUpdate = true;
   	geometry.lineDistancesNeedUpdate = true;
-  	// geometry.buffersNeedUpdate = true;
   	geometry.groupsNeedUpdate = true;
   }
 

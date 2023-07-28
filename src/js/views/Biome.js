@@ -63,30 +63,6 @@ class Biome {
     }
   }
 
-  //unused
-  drawRivers(genSetting) {
-    // rivers
-    let c = genSetting.riverColor;
-    this.ctx.strokeStyle = "rgba("+c.r*255+", "+c.g*255+", "+c.b*255+", 0.5)";
-
-    let x = genSetting.randRange(0, this.width);
-    let y = genSetting.randRange(0, this.height);
-    let prevX = x;
-    let prevY = y;
-
-    for (let i=0; i<5; i++) {
-      x = genSetting.randRange(0, this.width);
-      y = genSetting.randRange(0, this.height);
-
-      this.ctx.moveTo(prevX, prevY);
-      this.ctx.lineTo(x, y);
-      this.ctx.stroke();
-
-      prevX = x;
-      prevY = y;
-    }
-  }
-
   drawWater(genSetting) {
     let x1 = 0;
     let y1 = this.height - (this.height * genSetting.waterLevel);
@@ -101,7 +77,6 @@ class Biome {
     let falloff2 = 1.0*255;
     let falloff3 = 0.7*255;
     let opacity = 0.9;
-    // gradient.addColorStop(0.0, "rgba("+cr+", "+cg+", "+cb+", "+0+")");
     gradient.addColorStop(0.0, "rgba("+Math.round(c.r*falloff)+", "+Math.round(c.g*falloff)+", "+Math.round(c.b*falloff)+", "+opacity+")");
     gradient.addColorStop(0.2, "rgba("+Math.round(c.r*falloff2)+", "+Math.round(c.g*falloff2)+", "+Math.round(c.b*falloff2)+", "+opacity+")");
     gradient.addColorStop(0.8, "rgba("+Math.round(c.r*falloff3)+", "+Math.round(c.g*falloff3)+", "+Math.round(c.b*falloff3)+", "+opacity+")");
@@ -123,7 +98,6 @@ class Biome {
     let c = genSetting.beachColor;
     let falloff = 1.0*255;
     let falloff2 = 1.0*255;
-    // gradient.addColorStop(0.0, "rgba("+cr+", "+cg+", "+cb+", "+0+")");
     gradient.addColorStop(0.0, "rgba("+Math.round(c.r*falloff)+", "+Math.round(c.g*falloff)+", "+Math.round(c.b*falloff)+", "+0.0+")");
     gradient.addColorStop(1.0, "rgba("+Math.round(c.r*falloff2)+", "+Math.round(c.g*falloff2)+", "+Math.round(c.b*falloff2)+", "+0.3+")");
 
@@ -142,7 +116,6 @@ class Biome {
     let c = genSetting.inlandColor;
     let falloff = 1.0*255;
     let falloff2 = 1.0*255;
-    // gradient.addColorStop(0.0, "rgba("+cr+", "+cg+", "+cb+", "+0+")");
     gradient.addColorStop(0.0, "rgba("+Math.round(c.r*falloff)+", "+Math.round(c.g*falloff)+", "+Math.round(c.b*falloff)+", "+0.0+")");
     gradient.addColorStop(1.0, "rgba("+Math.round(c.r*falloff2)+", "+Math.round(c.g*falloff2)+", "+Math.round(c.b*falloff2)+", "+0.5+")");
 
@@ -188,39 +161,8 @@ class Biome {
     this.ctx.fillRect(0, 0, this.width, this.height);
   }
 
-  //these two are unused
-  randomCircle(x, y, rad, c) {
-    this.ctx.fillStyle = "rgba("+c.r*255+", "+c.g*255+", "+c.b*255+", 0.5)";
-    // this.ctx.lineWidth = 1;
-
-    this.ctx.beginPath();
-    this.ctx.arc(x, y, rad, 0, 2*Math.PI);
-    this.ctx.fill();
-  }
-
-  blackWhiteGradient() {
-    let x1 = 0;
-    let y1 = 0;
-    let x2 = this.width;
-    let y2 = this.height;
-
-    let gradient = this.ctx.createLinearGradient(x1, y1, x2, y2);
-
-
-    gradient.addColorStop(0, "rgba(255, 255, 255, 1.0)");
-    gradient.addColorStop(1, "rgba(0, 0, 0, 1.0)");
-
-    this.ctx.fillStyle = gradient;
-    this.ctx.fillRect(0, 0, this.width, this.height);
-  }
-
   toCanvasColor(c) {
     return "rgba("+Math.round(c.r*255)+", "+Math.round(c.g*255)+", "+Math.round(c.b*255)+", 1.0)";
-  }
-
-  mix(v1, v2, amount) {
-    let dist = v2 - v1;
-    return v1 + (dist * amount);
   }
 }
 

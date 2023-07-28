@@ -17,12 +17,7 @@ export default class Stars {
     this.starMaps = [];
 
     this.setup();
-    // this.render();
 
-  }
-
-  update() {
-    //
   }
 
   setup() {
@@ -80,20 +75,16 @@ export default class Stars {
   }
 
   computeGeometry(geometry) {
-  	// geometry.makeGroups();
   	geometry.computeVertexNormals()
   	geometry.computeBoundingSphere();
   	geometry.computeBoundingBox();
-  	// geometry.computeLineDistances();
 
   	geometry.verticesNeedUpdate = true;
   	geometry.elementsNeedUpdate = true;
   	geometry.uvsNeedUpdate = true;
   	geometry.normalsNeedUpdate = true;
-  	// geometry.tangentsNeedUpdate = true;
   	geometry.colorsNeedUpdate = true;
   	geometry.lineDistancesNeedUpdate = true;
-  	// geometry.buffersNeedUpdate = true;
   	geometry.groupsNeedUpdate = true;
   }
 

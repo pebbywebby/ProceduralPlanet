@@ -39,7 +39,10 @@ class TemperatureMap extends Map {
     render(props) {
         // props.resolution
         // props.heightMaps[]
-        // props.waterLevel
+        // props.pole1Factor
+        // props.pole2Factor
+        // props.heightFactor
+        // props.iciness
 
         for (let i = 0; i < 6; i++) {
             this.mats[i].uniforms.resolution.value = props.resolution;
