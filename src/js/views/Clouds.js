@@ -1,6 +1,5 @@
 import * as THREE from 'three'
 import CloudMap from 'views/CloudMap.js'
-import tinycolor from 'tinycolor2'
 
 class Clouds {
 
