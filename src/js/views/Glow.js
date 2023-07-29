@@ -15,13 +15,9 @@ class Glow {
     this.c = 1.0;
     this.p = 1.4;
 
-    // window.gui.add(this, "glow", 0.0, 1.0);
-
     let glowFolder = window.gui.addFolder('Glow');
     glowFolder.add(this, "c", 0, 1).step(0.01);
     glowFolder.add(this, "p", 0, 6).step(0.01);
-
-
 
     this.mat = new THREE.ShaderMaterial({
       vertexShader: shaderVert,
@@ -37,8 +33,6 @@ class Glow {
     this.mat.transparent = true;
     this.mat.blending = THREE.AdditiveBlending;
     this.mat.side = THREE.BackSide;
-
-    // this.mat = new THREE.MeshStandardMaterial({color: 0xFFFFFF});
 
     this.geo = new THREE.IcosahedronGeometry(1, 6);
     this.sphere = new THREE.Mesh(this.geo, this.mat);

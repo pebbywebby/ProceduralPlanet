@@ -33,11 +33,11 @@ class TextureMap extends Map {
 
   render(props) {
     // props.resolution
+    // props.biomeMap
     // props.heightMaps[]
     // props.moistureMaps[]
-    // props.biomeMap
-
-    let resolution = props.resolution;
+    // props.temperatureMaps[]
+    // props.iceCutoff
 
     for (let i = 0; i < 6; i++) {
 

@@ -15,12 +15,14 @@
     "copy-webpack-plugin": "^11.0.0",
     "css-loader": "^6.8.1",
     "exports-loader": "^4.0.0",
+    "file-loader": "^6.2.0",
     "glslify": "^5.1.0",
     "glslify-loader": "^2.0.0",
     "html-webpack-plugin": "^5.5.3",
     "ify-loader": "^1.1.0",
     "json-loader": "^0.5.7",
     "mini-css-extract-plugin": "^2.7.6",
+    "open": "^8.4.1",
     "ora": "^5.4.1",
     "raw-loader": "^4.0.2",
     "shelljs": "^0.8.5",
@@ -33,22 +35,16 @@
   },
   "dependencies": {
     "dat.gui": "^0.7.9",
-    "file-loader": "^6.2.0",
     "glsl-checker": "^1.0.1",
     "glsl-noise": "0.0.0",
     "glsl-worley": "^1.0.2",
     "glslify": "^7.1.1",
     "glslify-fancy-imports": "^1.0.1",
     "glslify-hex": "^2.1.1",
-    "open": "^8.4.2",
     "random-lorem": "^1.0.4",
     "seedrandom": "^3.0.5",
-    "serve": "^14.2.0",
-    "simplex-noise": "^4.0.1",
     "stats-js": "^1.0.1",
-    "three": "^0.154.0",
-    "three.meshline": "^1.4.0",
-    "tinycolor2": "^1.6.0"
+    "three": "^0.154.0"
   },
   "browserify": {
     "transform": [

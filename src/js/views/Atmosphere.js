@@ -15,12 +15,6 @@ class Atmosphere {
     this.atmo4 = 0.5;
     this.atmo5 = 0.1;
 
-    // this.atmo1 = 0.23;
-    // this.atmo2 = 0.55;
-    // this.atmo3 = 2.0;
-    // this.atmo4 = 0.46;
-    // this.atmo5 = 0.36;
-
     this.color = new THREE.Color(0x00ffff);
     this.uqmPlanetType = props.uqmPlanetType;
 
@@ -34,13 +28,6 @@ class Atmosphere {
 
     this.size = 1007;
     this.atmosphere = 0.3;
-    // window.gui.add(this, "atmosphere", 0.0, 1.0).step(0.01);
-
-    // window.gui.add(this, "atmo1", 0.0, 3.0);
-    // window.gui.add(this, "atmo2", 0.0, 3.0);
-    // window.gui.add(this, "atmo3", 0.0, 3.0);
-    // window.gui.add(this, "atmo4", 0.0, 3.0);
-    // window.gui.add(this, "atmo5", 0.0, 3.0);
 
     this.mat = new THREE.ShaderMaterial({
       vertexShader: shaderVert,
@@ -59,9 +46,6 @@ class Atmosphere {
 
     this.mat.transparent = true;
     this.mat.blending = THREE.AdditiveBlending;
-    // this.mat.side = THREE.DoubleSide;
-
-    // this.mat = new THREE.MeshStandardMaterial({color: 0xFFFFFF});
 
     this.geo = new THREE.IcosahedronGeometry(1, 6);
     this.sphere = new THREE.Mesh(this.geo, this.mat);
@@ -89,12 +73,6 @@ class Atmosphere {
     this.color.b = genSetting.randRange(0.5, 1.0);
 
     this.mat.uniforms.color.value = this.color;
-  }
-
-  randRange(low, high) {
-    let range = high - low;
-    let n = window.rng() * range;
-    return low + n;
   }
 }
 

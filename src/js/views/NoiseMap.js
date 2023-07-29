@@ -42,6 +42,7 @@ class NoiseMap extends Map {
     // props.res2
     // props.resMix
     // props.mixScale
+    // props.doesRidged
     // props.isJewel
 
     let resolution = props.resolution;

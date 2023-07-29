@@ -35,8 +35,6 @@ export default class SunTexture {
     this.drawStarGradient(genSetting);
     this.drawBeams(genSetting);
     this.drawHalo(genSetting);
-    // this.drawBaseGradient2();
-
 
     this.texture = new THREE.CanvasTexture(this.canvas);
   }
@@ -55,7 +53,6 @@ export default class SunTexture {
     let h = this.baseHue;
     let s = 0.8;
     let l = 0.1;
-    // console.log("h = " + h);
 
     let gradient = this.ctx.createRadialGradient(x,y,r1,x,y,r2);
     this.addColorToGradient(0, {h:h, s:s, l:l, a:0.5}, gradient);
@@ -75,7 +72,6 @@ export default class SunTexture {
     let h = this.baseHue-0.1;
     let s = 0.6;
     let l = 0.4;
-    // console.log("h = " + h);
 
     let size = 0.03;
     size = genSetting.randRange(0.03, 0.07);
@@ -100,7 +96,6 @@ export default class SunTexture {
     let h = this.baseHue;
     let s = 1.0;
     let l = 0.9;
-    // console.log("h = " + h);
 
     let dist = genSetting.randRange(0.5, 1.0);
     dist = 1;
@@ -127,10 +122,6 @@ export default class SunTexture {
       }
     }
 
-    // dist = genSetting.randRange(0.9, 1.0);
-    // numBeams = Math.floor(genSetting.randRange(2, 8));
-    // numBeams *= 2;
-    // l = genSetting.randRange(0.5, 1.0);
     size = genSetting.randRange(0.01, 0.1);
     gradient = this.ctx.createRadialGradient(x,y,r1,x,y,r2);
     this.addColorToGradient(0, {h:h, s:s, l:l, a:0.1}, gradient);
@@ -160,16 +151,12 @@ export default class SunTexture {
     let r2 = this.width/2;
 
     let h = this.baseHue+genSetting.randRange(-0.2, 0.2);
-
-    // h = genSetting.randRange(0,1);
     let s = 1.0;
     let l = 0.7;
-    // console.log("h = " + h);
 
     let pos = 0.23;
     pos = genSetting.randRange(0.1, 0.2);
     let width = 0.05;
-    // width = genSetting.randRange(0.01, 0.03);
 
     let gradient = this.ctx.createRadialGradient(x,y,r1,x,y,r2);
     this.addColorToGradient(pos-width, {h:h, s:s, l:l, a:0.0}, gradient);
