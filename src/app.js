@@ -1,4 +1,4 @@
 import 'css/style.css'
-import Main from 'js/main'
+import App from 'js/App'
 
-new Main();
+new App();

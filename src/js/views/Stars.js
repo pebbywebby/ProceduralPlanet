@@ -17,11 +17,9 @@ export default class Stars {
     this.starMaps = [];
 
     this.setup();
-
   }
 
   setup() {
-
     this.starMap = new StarMap();
     this.starMaps = this.starMap.maps;
 
@@ -48,7 +46,6 @@ export default class Stars {
   }
 
   render(props, genSetting) {
-
     this.seed = genSetting.randRange(0, 1000);
 
     this.starMap.render({
