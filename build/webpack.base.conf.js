@@ -26,9 +26,7 @@ module.exports = {
         alias: {
             'fonts': path.resolve(__dirname, '../src/fonts'),
             'views': path.resolve(__dirname, '../src/js/views'),
-            'models': path.resolve(__dirname, '../src/models'),
             'shaders': path.resolve(__dirname, '../src/js/shaders'),
-            'sounds': path.resolve(__dirname, '../src/sounds'),
             'textures': path.resolve(__dirname, '../src/textures'),
             'img': path.resolve(__dirname, '../src/img'),
         }
@@ -37,8 +35,6 @@ module.exports = {
         new CopyWebpackPlugin({
             patterns: [
                 {from: 'src/fonts/', to: 'assets/fonts/'},
-                {from: 'src/models/', to: 'assets/models/'},
-                {from: 'src/sounds/', to: 'assets/sounds/'},
                 {from: 'src/textures/', to: 'assets/textures/'},
                 {from: 'src/img/', to: 'assets/img/'},
             ],
